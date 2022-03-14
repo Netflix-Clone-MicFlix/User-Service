@@ -1,5 +1,5 @@
 app:
-  name: 'go-clean-template'
+  name: 'User-service'
   version: '1.0.0'
 
 http:
@@ -7,7 +7,7 @@ http:
 
 logger:
   log_level: 'debug'
-  rollbar_env: 'go-clean-template'
+  rollbar_env: 'User-service'
 
 postgres:
   pool_max: 2
