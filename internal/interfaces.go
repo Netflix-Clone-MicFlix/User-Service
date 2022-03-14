@@ -1,5 +1,5 @@
 // Package usecase implements application business logic. Each logic group in own file.
-package usecase
+package internal
 
 import (
 	"context"
@@ -10,20 +10,19 @@ import (
 //go:generate mockgen -source=interfaces.go -destination=./mocks_test.go -package=usecase_test
 
 type (
-	// Translation -.
-	Translation interface {
-		Translate(context.Context, entity.Translation) (entity.Translation, error)
-		History(context.Context) ([]entity.Translation, error)
+	// User -.
+	User interface {
+		GetById(context.Context, int) (entity.User, error)
+		GetAll(context.Context) ([]entity.User, error)
 	}
 
-	// TranslationRepo -.
-	TranslationRepo interface {
-		Store(context.Context, entity.Translation) error
-		GetHistory(context.Context) ([]entity.Translation, error)
+	// UserRepo -.
+	UserRepo interface {
+		GetById(context.Context, int) (entity.User, error)
+		GetAll(context.Context) ([]entity.User, error)
 	}
 
-	// TranslationWebAPI -.
-	TranslationWebAPI interface {
-		Translate(entity.Translation) (entity.Translation, error)
+	// UserWebAPI -.
+	UserWebAPI interface {
 	}
 )

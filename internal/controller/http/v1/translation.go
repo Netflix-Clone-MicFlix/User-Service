@@ -3,51 +3,53 @@ package v1
 import (
 	"net/http"
 
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 
-	"github.com/evrone/go-clean-template/internal/entity"
-	"github.com/evrone/go-clean-template/internal/usecase"
-	"github.com/evrone/go-clean-template/pkg/logger"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
 )
 
-type translationRoutes struct {
-	t usecase.Translation
+type UserRoutes struct {
+	t internal.User
 	l logger.Interface
 }
 
-func newTranslationRoutes(handler *gin.RouterGroup, t usecase.Translation, l logger.Interface) {
-	r := &translationRoutes{t, l}
+func newUserRoutes(handler *gin.RouterGroup, t internal.User, l logger.Interface) {
+	r := &UserRoutes{t, l}
 
-	h := handler.Group("/translation")
+	h := handler.Group("/user")
 	{
-		h.GET("/history", r.history)
-		h.POST("/do-translate", r.doTranslate)
+		h.GET("", r.GetAll)
+		h.GET("/:user_id", r.GetById)
 	}
 }
 
 type historyResponse struct {
-	History []entity.Translation `json:"history"`
+	History []entity.User `json:"history"`
 }
 
 // @Summary     Show history
-// @Description Show all translation history
+// @Description Show all user history
 // @ID          history
-// @Tags  	    translation
+// @Tags  	    user
 // @Accept      json
 // @Produce     json
 // @Success     200 {object} historyResponse
 // @Failure     500 {object} response
-// @Router      /translation/history [get]
-func (r *translationRoutes) history(c *gin.Context) {
-	translations, err := r.t.History(c.Request.Context())
+// @Router      /user [get]
+func (r *UserRoutes) GetAll(c *gin.Context) {
+	users, err := r.t.GetAll(c.Request.Context())
 	if err != nil {
-		r.l.Error(err, "http - v1 - history")
+		r.l.Error(err, "http - v1 - GetAll")
 		errorResponse(c, http.StatusInternalServerError, "database problems")
 
 		return
 	}
 
-	c.JSON(http.StatusOK, historyResponse{translations})
+	c.JSON(http.StatusOK, historyResponse{users})
 }
 
 type doTranslateRequest struct {
@@ -59,37 +61,28 @@ type doTranslateRequest struct {
 // @Summary     Translate
 // @Description Translate a text
 // @ID          do-translate
-// @Tags  	    translation
+// @Tags  	    user
 // @Accept      json
 // @Produce     json
-// @Param       request body doTranslateRequest true "Set up translation"
-// @Success     200 {object} entity.Translation
+// @Param       request body doTranslateRequest true "Set up user"
+// @Success     200 {object} entity.User
 // @Failure     400 {object} response
 // @Failure     500 {object} response
-// @Router      /translation/do-translate [post]
-func (r *translationRoutes) doTranslate(c *gin.Context) {
-	var request doTranslateRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		r.l.Error(err, "http - v1 - doTranslate")
-		errorResponse(c, http.StatusBadRequest, "invalid request body")
-
-		return
+// @Router      /user/do-translate [post]
+func (r *UserRoutes) GetById(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Param("user_id"))
+	if err != nil {
+		r.l.Error(err, "http - v1 - survey")
+		errorResponse(c, http.StatusBadRequest, "SurveyId not an integer")
 	}
 
-	translation, err := r.t.Translate(
-		c.Request.Context(),
-		entity.Translation{
-			Source:      request.Source,
-			Destination: request.Destination,
-			Original:    request.Original,
-		},
-	)
+	user, err := r.t.GetById(c.Request.Context(), userId)
 	if err != nil {
 		r.l.Error(err, "http - v1 - doTranslate")
-		errorResponse(c, http.StatusInternalServerError, "translation service problems")
+		errorResponse(c, http.StatusInternalServerError, "user service problems")
 
 		return
 	}
 
-	c.JSON(http.StatusOK, translation)
+	c.JSON(http.StatusOK, user)
 }
