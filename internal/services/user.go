@@ -75,11 +75,18 @@ func (uc *UserUseCase) Login(ctx context.Context, user entity.User) error {
 		return fmt.Errorf("UserUseCase - Login - s.userRepo.Store: %w", err)
 	}
 
-	if userdb.Email != user.Email {
+	if userdb.Email != user.Email && !security.CheckPasswordsMatch(userdb.Password, user.Password, salt.SaltData) {
 		return fmt.Errorf("UserRepo - Login Email- rows.Scan: %w", err)
 	}
-	if !security.CheckPasswordsMatch(userdb.Password, user.Password, salt.SaltData) {
-		return fmt.Errorf("UserRepo - Login password - rows.Scan: %w", err)
+
+	updatedSalt, err := uc.saltRepo.Update(context.Background(), userdb.Id)
+	if err != nil {
+		return fmt.Errorf("UserUseCase - Login - s.userRepo.Store: %w", err)
+	}
+
+	err = uc.userRepo.Update(context.Background(), userdb.Id, user, updatedSalt)
+	if err != nil {
+		return fmt.Errorf("UserUseCase - Login - s.userRepo.Store: %w", err)
 	}
 
 	return err

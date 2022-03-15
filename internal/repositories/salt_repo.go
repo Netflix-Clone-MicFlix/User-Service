@@ -73,12 +73,15 @@ func (sr *SaltRepo) Update(ctx context.Context, user_id string) ([]byte, error) 
 	salt := entity.Salt{
 		SaltData:  rs,
 		CreatedAt: time.Now(),
+		UserId:    user_id,
 	}
+
+	update := bson.M{"$set": salt}
 
 	_, err := sr.Database.Collection(saltCollectionName).UpdateOne(
 		context.Background(),
 		bson.M{"userid": user_id},
-		salt)
+		update)
 
 	if err != nil {
 		return nil, fmt.Errorf("SaltRepo - Create - rows.Scan: %w", err)

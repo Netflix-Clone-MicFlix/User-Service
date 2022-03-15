@@ -72,13 +72,20 @@ func (ur *UserRepo) Create(ctx context.Context, user entity.User, salt []byte) e
 
 // Update -.
 func (ur *UserRepo) Update(ctx context.Context, user_id string, user entity.User, salt []byte) error {
+
+	var hashedPassword = security.HashPassword(user.Password, salt)
+	user.Password = hashedPassword
+	user.Id = user_id
+
+	update := bson.M{"$set": user}
+
 	_, err := ur.Database.Collection(userCollectionName).UpdateOne(
 		context.Background(),
-		bson.M{"_id": user_id},
-		user)
+		bson.M{"id": user_id},
+		update)
 
 	if err != nil {
-		return fmt.Errorf("UserRepo - Create - rows.Scan: %w", err)
+		return fmt.Errorf("UserRepo - Update - rows.Scan: %w", err)
 	}
 	return nil
 }
