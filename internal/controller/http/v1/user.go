@@ -30,7 +30,7 @@ func newUserRoutes(handler *gin.RouterGroup, t internal.User, l logger.Interface
 type userCollectionResponse struct {
 	Users []entity.User `json:"users"`
 }
-type userResponse struct {
+type UserRequest struct {
 	User entity.User `json:"users"`
 }
 
@@ -53,10 +53,6 @@ func (r *UserRoutes) GetAll(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, userCollectionResponse{users})
-}
-
-type UserRequest struct {
-	User entity.User `json:"users"`
 }
 
 // @Summary     Show user with id

@@ -25,15 +25,15 @@ type (
 		Create(context.Context, entity.User, []byte) error
 		Update(context.Context, string, entity.User, []byte) error
 		Delete(context.Context, string) error
-		Login(context.Context, entity.User, []byte) error
+		Login(context.Context, entity.User) (entity.User, error)
 	}
 
-	// UserRepo -.
+	// SaltRepo -.
 	SaltRepo interface {
-		GetById(context.Context, string) (entity.User, error)
-		Create(context.Context, string) error
+		GetById(context.Context, string) (entity.Salt, error)
+		Create(context.Context, string) ([]byte, error)
 		Delete(context.Context, string) error
-		Update(context.Context, string) error
+		Update(context.Context, string) ([]byte, error)
 	}
 	// UserWebAPI -.
 	WebAPI interface {

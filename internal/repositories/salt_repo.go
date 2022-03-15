@@ -26,22 +26,19 @@ func NewSaltRepo(mdb *mongodb.MongoDB) *SaltRepo {
 
 // GetById -.
 func (sr *SaltRepo) GetById(ctx context.Context, user_id string) (entity.Salt, error) {
-	user := entity.Salt{}
+	salt := entity.Salt{}
 
-	var filter bson.M = bson.M{"user_id": user_id}
-	curr, err := sr.Database.Collection(saltCollectionName).Find(context.Background(), filter)
+	var filter bson.M = bson.M{"userid": user_id}
+	err := sr.Database.Collection(saltCollectionName).FindOne(context.Background(), filter).Decode(&salt)
 	if err != nil {
 		return entity.Salt{}, fmt.Errorf("SaltRepo - GetById - rows.Scan: %w", err)
 	}
-	defer curr.Close(context.Background())
 
-	curr.All(context.Background(), &user)
-
-	return user, nil
+	return salt, nil
 }
 
 // Create -.
-func (sr *SaltRepo) Create(ctx context.Context, user_id string) error {
+func (sr *SaltRepo) Create(ctx context.Context, user_id string) ([]byte, error) {
 
 	var rs = security.GenerateRandomSalt()
 	salt := entity.Salt{
@@ -52,29 +49,9 @@ func (sr *SaltRepo) Create(ctx context.Context, user_id string) error {
 
 	_, err := sr.Database.Collection(saltCollectionName).InsertOne(context.Background(), salt)
 	if err != nil {
-		return fmt.Errorf("SaltRepo - Create - rows.Scan: %w", err)
+		return nil, fmt.Errorf("SaltRepo - Create - rows.Scan: %w", err)
 	}
-	return nil
-}
-
-// Update -.
-func (sr *SaltRepo) Update(ctx context.Context, user_id string) error {
-
-	var rs = security.GenerateRandomSalt()
-	salt := entity.Salt{
-		SaltData:  rs,
-		CreatedAt: time.Now(),
-	}
-
-	_, err := sr.Database.Collection(saltCollectionName).UpdateOne(
-		context.Background(),
-		bson.M{"user_id": user_id},
-		salt)
-
-	if err != nil {
-		return fmt.Errorf("SaltRepo - Create - rows.Scan: %w", err)
-	}
-	return nil
+	return rs, nil
 }
 
 // Delete -.
@@ -87,4 +64,24 @@ func (sr *SaltRepo) Delete(ctx context.Context, user_id string) error {
 		return fmt.Errorf("SaltRepo - Delete - rows.Scan: %w", err)
 	}
 	return nil
+}
+
+// Update -.
+func (sr *SaltRepo) Update(ctx context.Context, user_id string) ([]byte, error) {
+
+	var rs = security.GenerateRandomSalt()
+	salt := entity.Salt{
+		SaltData:  rs,
+		CreatedAt: time.Now(),
+	}
+
+	_, err := sr.Database.Collection(saltCollectionName).UpdateOne(
+		context.Background(),
+		bson.M{"userid": user_id},
+		salt)
+
+	if err != nil {
+		return nil, fmt.Errorf("SaltRepo - Create - rows.Scan: %w", err)
+	}
+	return rs, nil
 }

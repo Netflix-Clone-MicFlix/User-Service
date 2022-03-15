@@ -96,20 +96,14 @@ func (ur *UserRepo) Delete(ctx context.Context, user_id string) error {
 }
 
 // Login -.
-func (ur *UserRepo) Login(ctx context.Context, user entity.User, salt []byte) error {
+func (ur *UserRepo) Login(ctx context.Context, user entity.User) (entity.User, error) {
 	userdb := entity.User{}
 
 	var filter bson.M = bson.M{"email": user.Email}
 	err := ur.Database.Collection(userCollectionName).FindOne(context.Background(), filter).Decode(&userdb)
 	if err != nil {
-		return fmt.Errorf("UserRepo - Login - rows.Scan: %w", err)
-	}
-	if userdb.Email != user.Email {
-		return fmt.Errorf("UserRepo - Login - rows.Scan: %w", err)
-	}
-	if !security.CheckPasswordsMatch(userdb.Password, user.Password, salt) {
-		return fmt.Errorf("UserRepo - Login - rows.Scan: %w", err)
+		return entity.User{}, fmt.Errorf("UserRepo - Login - rows.Scan: %w", err)
 	}
 
-	return nil
+	return userdb, nil
 }

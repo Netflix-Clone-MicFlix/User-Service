@@ -11,7 +11,7 @@ import (
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/config"
 	v1 "github.com/Netflix-Clone-MicFlix/User-Service/internal/controller/http/v1"
-	repo "github.com/Netflix-Clone-MicFlix/User-Service/internal/repositories"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/repositories"
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal/services"
 
 	// "github.com/Netflix-Clone-MicFlix/User-Service/internal/webapi"
@@ -32,8 +32,8 @@ func Run(cfg *config.Config) {
 
 	// Use case
 	userUseCase := services.NewUserUseCase(
-		repo.NewUserRepo(mdb),
-		repo.NewSaltRepo(mdb),
+		repositories.NewUserRepo(mdb),
+		repositories.NewSaltRepo(mdb),
 		nil,
 	)
 
