@@ -17,23 +17,22 @@ import (
 	// "github.com/Netflix-Clone-MicFlix/User-Service/internal/webapi"
 	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/httpserver"
 	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
-	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/postgres"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/mongodb"
 )
 
 // Run creates objects via constructors.
 func Run(cfg *config.Config) {
 	l := logger.New(cfg.Log.Level)
 
-	// Repository
-	pg, err := postgres.New(cfg.PG.URL, postgres.MaxPoolSize(cfg.PG.PoolMax))
+	// Repository mongodb
+	mdb, err := mongodb.New(cfg.MDB.Username, cfg.MDB.Password, cfg.MDB.Cluster, cfg.MDB.Database)
 	if err != nil {
 		l.Fatal(fmt.Errorf("app - Run - postgres.New: %w", err))
 	}
-	defer pg.Close()
 
 	// Use case
 	userUseCase := services.NewUserUseCase(
-		repo.New(pg),
+		repo.NewUserRepo(mdb),
 		nil,
 	)
 

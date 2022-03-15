@@ -23,6 +23,6 @@ type (
 	}
 
 	// UserWebAPI -.
-	UserWebAPI interface {
+	WebAPI interface {
 	}
 )

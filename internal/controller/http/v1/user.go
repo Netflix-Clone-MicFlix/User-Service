@@ -27,17 +27,17 @@ func newUserRoutes(handler *gin.RouterGroup, t internal.User, l logger.Interface
 	}
 }
 
-type historyResponse struct {
-	History []entity.User `json:"history"`
+type userResponse struct {
+	Users []entity.User `json:"users"`
 }
 
-// @Summary     Show history
-// @Description Show all user history
-// @ID          history
+// @Summary     Show users
+// @Description Show all users
+// @ID          user
 // @Tags  	    user
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} historyResponse
+// @Success     200 {object} userResponse
 // @Failure     500 {object} response
 // @Router      /user [get]
 func (r *UserRoutes) GetAll(c *gin.Context) {
@@ -49,22 +49,20 @@ func (r *UserRoutes) GetAll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, historyResponse{users})
+	c.JSON(http.StatusOK, userResponse{users})
 }
 
-type doTranslateRequest struct {
-	Source      string `json:"source"       binding:"required"  example:"auto"`
-	Destination string `json:"destination"  binding:"required"  example:"en"`
-	Original    string `json:"original"     binding:"required"  example:"текст для перевода"`
+type UserRequest struct {
+	User entity.User `json:"users"`
 }
 
-// @Summary     Translate
-// @Description Translate a text
+// @Summary     User
+// @Description User a text
 // @ID          do-translate
 // @Tags  	    user
 // @Accept      json
 // @Produce     json
-// @Param       request body doTranslateRequest true "Set up user"
+// @Param       request body doUserRequest true "Set up user"
 // @Success     200 {object} entity.User
 // @Failure     400 {object} response
 // @Failure     500 {object} response
@@ -78,7 +76,7 @@ func (r *UserRoutes) GetById(c *gin.Context) {
 
 	user, err := r.t.GetById(c.Request.Context(), userId)
 	if err != nil {
-		r.l.Error(err, "http - v1 - doTranslate")
+		r.l.Error(err, "http - v1 - doUser")
 		errorResponse(c, http.StatusInternalServerError, "user service problems")
 
 		return

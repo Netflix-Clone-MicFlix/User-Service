@@ -14,6 +14,7 @@ type (
 		Log  `yaml:"logger"`
 		PG   `yaml:"postgres"`
 		RMQ  `yaml:"rabbitmq"`
+		MDB  `yaml:"mongodb"`
 	}
 
 	// App -.
@@ -34,15 +35,21 @@ type (
 
 	// PG -.
 	PG struct {
-		PoolMax int    `env-required:"true" yaml:"pool_max" env:"PG_POOL_MAX"`
-		URL     string `env-required:"true"                 env:"PG_URL"`
+		PoolMax int `env-required:"true" yaml:"pool_max" env:"PG_POOL_MAX"`
+		// URL     string `env-required:"true"                 env:"PG_URL"`
 	}
 
 	// RMQ -.
 	RMQ struct {
 		ServerExchange string `env-required:"true" yaml:"rpc_server_exchange" env:"RMQ_RPC_SERVER"`
 		ClientExchange string `env-required:"true" yaml:"rpc_client_exchange" env:"RMQ_RPC_CLIENT"`
-		URL            string `env-required:"true"                            env:"RMQ_URL"`
+		// URL            string `env-required:"true"                            env:"RMQ_URL"`
+	}
+	MDB struct {
+		Username string `env-required:"true" yaml:"username" env:"MDB_USERNAME"`
+		Password string `env-required:"true" yaml:"password" env:"MDB_PASSWORD"`
+		Cluster  string `env-required:"true" yaml:"cluster"  env:"MDB_CLUSTER"`
+		Database string `env-required:"true" yaml:"database" env:"MDB_DATABASE"`
 	}
 )
 

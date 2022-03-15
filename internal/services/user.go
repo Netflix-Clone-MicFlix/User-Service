@@ -4,17 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
 )
 
 // UserUseCase -.
 type UserUseCase struct {
-	repo   UserRepo
-	webAPI UserWebAPI
+	repo   internal.UserRepo
+	webAPI internal.WebAPI
 }
 
 // New -.
-func NewUserUseCase(r UserRepo, w WebAPI) *UserUseCase {
+func NewUserUseCase(r internal.UserRepo, w internal.WebAPI) *UserUseCase {
 	return &UserUseCase{
 		repo:   r,
 		webAPI: w,
@@ -31,7 +32,7 @@ func (uc *UserUseCase) GetById(ctx context.Context, user_id int) (entity.User, e
 	return user, nil
 }
 
-// Translate -.
+// GetAll - gets alls-.
 func (uc *UserUseCase) GetAll(ctx context.Context) ([]entity.User, error) {
 
 	users, err := uc.repo.GetAll(context.Background())

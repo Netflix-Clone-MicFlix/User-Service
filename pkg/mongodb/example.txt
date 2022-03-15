@@ -1,0 +1,91 @@
+package main
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+const dbname = "test"
+const collectionName = "ada"
+
+func main() {
+
+	router := gin.Default()
+	router.GET("/users", getUsers)
+	router.GET("/users/:id", getUserByID)
+	router.POST("/users", postUser)
+
+	router.Run("localhost:8080")
+}
+
+func getUsers(c *gin.Context) {
+	collection, err := getMongoDbCollection(dbname, collectionName)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Error no connection aviable")
+	}
+
+	var filter bson.M = bson.M{}
+	curr, err := collection.Find(context.Background(), filter)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Error no connection aviable")
+	}
+	defer curr.Close(context.Background())
+	var result []bson.M
+	curr.All(context.Background(), &result)
+
+	c.IndentedJSON(http.StatusOK, result)
+}
+
+// postAlbums adds an album from JSON received in the request body.
+func postUser(c *gin.Context) {
+	var newUser user
+	collection, err := getMongoDbCollection(dbname, collectionName)
+	// Call BindJSON to bind the received JSON to
+	// newAlbum.
+	if err := c.BindJSON(&newUser); err != nil {
+		return
+	}
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Error no connection aviable")
+	}
+
+	collection.InsertOne(context.Background(), newUser)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Error no connection aviable")
+	}
+	c.IndentedJSON(http.StatusCreated, newUser)
+}
+
+// getUserByID locates the user whose ID value matches the id
+// parameter sent by the client, then returns that album as a response.
+func getUserByID(c *gin.Context) {
+	id := c.Param("id")
+	print(id + "\n")
+
+	collection, err := getMongoDbCollection(dbname, collectionName)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Error no connection aviable")
+	}
+
+	objectID, _ := primitive.ObjectIDFromHex(id)
+	var filter bson.M = bson.M{"_id": objectID}
+	curr, err := collection.Find(context.Background(), filter)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Error no connection aviable")
+	}
+	defer curr.Close(context.Background())
+	var result []bson.M
+	curr.All(context.Background(), &result)
+
+	c.IndentedJSON(http.StatusOK, result)
+}
+
+func getGuid() string {
+	guid := uuid.NewV4()
+	return guid.String()
+}
