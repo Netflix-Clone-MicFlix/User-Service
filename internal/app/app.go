@@ -33,6 +33,7 @@ func Run(cfg *config.Config) {
 	// Use case
 	userUseCase := services.NewUserUseCase(
 		repo.NewUserRepo(mdb),
+		repo.NewSaltRepo(mdb),
 		nil,
 	)
 

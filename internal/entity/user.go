@@ -4,7 +4,8 @@ package entity
 
 // Translation -.
 type User struct {
-	Username string `json:"username"                   example:"poeky"`
-	Password string `json:"password"             example:"dsafsd111fa"`
-	Email    string `json:"email"     example:"example@hotmail.com"`
+	Id       string `json:"_id"            example:"1"`
+	Username string `json:"username"      example:"poeky"`
+	Password string `json:"password"      example:"dsafsd111fa"`
+	Email    string `json:"email"         example:"example@hotmail.com"`
 }

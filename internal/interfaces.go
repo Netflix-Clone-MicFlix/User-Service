@@ -12,16 +12,29 @@ import (
 type (
 	// User -.
 	User interface {
-		GetById(context.Context, int) (entity.User, error)
+		GetById(context.Context, string) (entity.User, error)
 		GetAll(context.Context) ([]entity.User, error)
+		Register(context.Context, entity.User) error
+		Login(context.Context, entity.User) error
 	}
 
 	// UserRepo -.
 	UserRepo interface {
-		GetById(context.Context, int) (entity.User, error)
 		GetAll(context.Context) ([]entity.User, error)
+		GetById(context.Context, string) (entity.User, error)
+		Create(context.Context, entity.User, []byte) error
+		Update(context.Context, string, entity.User, []byte) error
+		Delete(context.Context, string) error
+		Login(context.Context, entity.User, []byte) error
 	}
 
+	// UserRepo -.
+	SaltRepo interface {
+		GetById(context.Context, string) (entity.User, error)
+		Create(context.Context, string) error
+		Delete(context.Context, string) error
+		Update(context.Context, string) error
+	}
 	// UserWebAPI -.
 	WebAPI interface {
 	}

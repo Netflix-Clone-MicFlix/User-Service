@@ -3,8 +3,6 @@ package v1
 import (
 	"net/http"
 
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
@@ -24,11 +22,16 @@ func newUserRoutes(handler *gin.RouterGroup, t internal.User, l logger.Interface
 	{
 		h.GET("", r.GetAll)
 		h.GET("/:user_id", r.GetById)
+		h.POST("/register/", r.Register)
+		h.POST("/login/", r.Login)
 	}
 }
 
-type userResponse struct {
+type userCollectionResponse struct {
 	Users []entity.User `json:"users"`
+}
+type userResponse struct {
+	User entity.User `json:"users"`
 }
 
 // @Summary     Show users
@@ -49,30 +52,24 @@ func (r *UserRoutes) GetAll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, userResponse{users})
+	c.JSON(http.StatusOK, userCollectionResponse{users})
 }
 
 type UserRequest struct {
 	User entity.User `json:"users"`
 }
 
-// @Summary     User
-// @Description User a text
-// @ID          do-translate
+// @Summary     Show user with id
+// @Description Show users with id
+// @ID          user
 // @Tags  	    user
 // @Accept      json
 // @Produce     json
-// @Param       request body doUserRequest true "Set up user"
-// @Success     200 {object} entity.User
-// @Failure     400 {object} response
+// @Success     200 {object} userResponse
 // @Failure     500 {object} response
-// @Router      /user/do-translate [post]
+// @Router      /user [get]
 func (r *UserRoutes) GetById(c *gin.Context) {
-	userId, err := strconv.Atoi(c.Param("user_id"))
-	if err != nil {
-		r.l.Error(err, "http - v1 - survey")
-		errorResponse(c, http.StatusBadRequest, "SurveyId not an integer")
-	}
+	userId := c.Param("user_id")
 
 	user, err := r.t.GetById(c.Request.Context(), userId)
 	if err != nil {
@@ -83,4 +80,81 @@ func (r *UserRoutes) GetById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+// @Summary     User Register
+// @Description Registers User
+// @ID          Registers
+// @Tags  	    user
+// @Accept      json
+// @Produce     json
+// @Param       request body UserRequest true "Set up user"
+// @Success     200 {object} entity.User
+// @Failure     400 {object} response
+// @Failure     500 {object} response
+// @Router      /user/{UserRequest}[post]
+func (r *UserRoutes) Register(c *gin.Context) {
+	var request UserRequest
+
+	if err := c.ShouldBindJSON(&request.User); err != nil {
+		r.l.Error(err, "http - v1 - Register user")
+		errorResponse(c, http.StatusBadRequest, "invalid request body")
+
+		return
+	}
+
+	err := r.t.Register(c.Request.Context(), entity.User{
+		Username: request.User.Username,
+		Password: request.User.Password,
+		Email:    request.User.Email,
+	})
+
+	if err != nil {
+		r.l.Error(err, "http - v1 - Register")
+		errorResponse(c, http.StatusInternalServerError, "database problems")
+
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+// @Summary     User Login
+// @Description Login User
+// @ID          Login
+// @Tags  	    user
+// @Accept      json
+// @Produce     json
+// @Param       request body UserRequest true "Set up user"
+// @Success     200 {object} entity.User
+// @Failure     400 {object} response
+// @Failure     500 {object} response
+// @Router      /user/{UserRequest}[post]
+func (r *UserRoutes) Login(c *gin.Context) {
+	var request UserRequest
+
+	if err := c.ShouldBindJSON(&request.User); err != nil {
+		r.l.Error(err, "http - v1 - login reqeust")
+		errorResponse(c, http.StatusBadRequest, "invalid request body")
+
+		return
+	}
+
+	err := r.t.Login(c.Request.Context(), entity.User{
+		Username: request.User.Username,
+		Password: request.User.Password,
+		Email:    request.User.Email,
+	})
+
+	if err != nil {
+		r.l.Error(err, "http - v1 - login")
+		errorResponse(c, http.StatusInternalServerError, "database problems")
+
+		return
+	}
+
+	//tempory
+	succes := "Login succesfull!"
+
+	c.JSON(http.StatusOK, succes)
 }
