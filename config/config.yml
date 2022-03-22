@@ -3,7 +3,7 @@ app:
   version: '1.0.0'
 
 http:
-  port: '8080'
+  port: '9000'
 
 logger:
   log_level: 'debug'
@@ -15,3 +15,9 @@ postgres:
 rabbitmq:
   rpc_server_exchange: 'rpc_server'
   rpc_client_exchange: 'rpc_client'
+
+mongodb:
+  username : 'Mickey'
+  password : '6TTbNyaZvUxXMQA0'
+  cluster : 'fontysprojects.b76fa.azure.mongodb.net'
+  database : 'Micflix'
