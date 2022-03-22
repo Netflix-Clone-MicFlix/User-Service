@@ -54,6 +54,7 @@ jobs:
         reporter: java-junit        # Format of test results
         
   build-and-push-image:
+    needs: build-test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -69,7 +70,7 @@ jobs:
           image: ${{ secrets.DOCKER_IMAGE }}
           tags: v1, latest
           registry: docker.io
-          dockerfile: Dockerfile.ci
+          dockerfile: ../../Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
     
