@@ -1,4 +1,4 @@
-module github.com/Netflix-Clone-MicFlix/User-service
+module github.com/Netflix-Clone-MicFlix/User-Service
 
 go 1.17
 

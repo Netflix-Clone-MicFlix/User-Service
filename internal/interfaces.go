@@ -4,7 +4,7 @@ package internal
 import (
 	"context"
 
-	"github.com/Netflix-Clone-MicFlix/User-service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
 )
 
 //go:generate mockgen -source=interfaces.go -destination=./mocks_test.go -package=usecase_test

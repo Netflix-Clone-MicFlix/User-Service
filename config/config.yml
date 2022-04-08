@@ -1,5 +1,5 @@
 app:
-  name: 'User-service'
+  name: 'User-Service'
   version: '1.0.0'
 
 http:
@@ -9,11 +9,9 @@ http:
     - 'https://micflix-platform.krekels-server.com'
     - 'https://micflix-data.krekels-server.com'
 
-  
-
 logger:
   log_level: 'debug'
-  rollbar_env: 'User-service'
+  rollbar_env: 'User-Service'
 
 # postgres:
 #   pool_max: 2

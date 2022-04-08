@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Netflix-Clone-MicFlix/User-service/internal"
-	"github.com/Netflix-Clone-MicFlix/User-service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
 )
 
 // UserUseCase -.

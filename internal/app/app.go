@@ -12,15 +12,15 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/Netflix-Clone-MicFlix/User-service/config"
-	v1 "github.com/Netflix-Clone-MicFlix/User-service/internal/controller/http/v1"
-	"github.com/Netflix-Clone-MicFlix/User-service/internal/repositories"
-	"github.com/Netflix-Clone-MicFlix/User-service/internal/services"
+	"github.com/Netflix-Clone-MicFlix/User-Service/config"
+	v1 "github.com/Netflix-Clone-MicFlix/User-Service/internal/controller/http/v1"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/repositories"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/services"
 
-	// "github.com/Netflix-Clone-MicFlix/User-service/internal/webapi"
-	"github.com/Netflix-Clone-MicFlix/User-service/pkg/httpserver"
-	"github.com/Netflix-Clone-MicFlix/User-service/pkg/logger"
-	"github.com/Netflix-Clone-MicFlix/User-service/pkg/mongodb"
+	// "github.com/Netflix-Clone-MicFlix/User-Service/internal/webapi"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/httpserver"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/mongodb"
 )
 
 // Run creates objects via constructors.

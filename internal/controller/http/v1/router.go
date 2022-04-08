@@ -10,9 +10,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	// Swagger docs.
-	_ "github.com/Netflix-Clone-MicFlix/User-service/docs"
-	"github.com/Netflix-Clone-MicFlix/User-service/internal"
-	"github.com/Netflix-Clone-MicFlix/User-service/pkg/logger"
+	_ "github.com/Netflix-Clone-MicFlix/User-Service/docs"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
 )
 
 // NewRouter -.

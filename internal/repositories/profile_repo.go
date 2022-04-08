@@ -5,8 +5,8 @@ import (
 
 	"fmt"
 
-	"github.com/Netflix-Clone-MicFlix/User-service/internal/entity"
-	"github.com/Netflix-Clone-MicFlix/User-service/pkg/mongodb"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/mongodb"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 )

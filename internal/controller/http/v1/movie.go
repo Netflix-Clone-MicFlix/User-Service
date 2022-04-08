@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Netflix-Clone-MicFlix/User-service/internal"
-	"github.com/Netflix-Clone-MicFlix/User-service/internal/entity"
-	"github.com/Netflix-Clone-MicFlix/User-service/pkg/logger"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
 )
 
 type UserRoutes struct {
