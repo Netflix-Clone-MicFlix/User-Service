@@ -1,10 +1,12 @@
-module github.com/Netflix-Clone-MicFlix/User-Service
+module github.com/Netflix-Clone-MicFlix/User-service
 
 go 1.17
 
 require (
 	github.com/Eun/go-hit v0.5.23
+	github.com/Netflix-Clone-MicFlix/User-Service v0.0.0-20220322203214-23756b90e7bf
 	github.com/evrone/go-clean-template v1.4.2
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/google/uuid v1.3.0

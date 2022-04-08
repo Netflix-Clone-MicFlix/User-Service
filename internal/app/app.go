@@ -7,17 +7,20 @@ import (
 	"os/signal"
 	"syscall"
 
+	"net/http"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/Netflix-Clone-MicFlix/User-Service/config"
-	v1 "github.com/Netflix-Clone-MicFlix/User-Service/internal/controller/http/v1"
-	"github.com/Netflix-Clone-MicFlix/User-Service/internal/repositories"
-	"github.com/Netflix-Clone-MicFlix/User-Service/internal/services"
+	"github.com/Netflix-Clone-MicFlix/User-service/config"
+	v1 "github.com/Netflix-Clone-MicFlix/User-service/internal/controller/http/v1"
+	"github.com/Netflix-Clone-MicFlix/User-service/internal/repositories"
+	"github.com/Netflix-Clone-MicFlix/User-service/internal/services"
 
-	// "github.com/Netflix-Clone-MicFlix/User-Service/internal/webapi"
-	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/httpserver"
-	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
-	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/mongodb"
+	// "github.com/Netflix-Clone-MicFlix/User-service/internal/webapi"
+	"github.com/Netflix-Clone-MicFlix/User-service/pkg/httpserver"
+	"github.com/Netflix-Clone-MicFlix/User-service/pkg/logger"
+	"github.com/Netflix-Clone-MicFlix/User-service/pkg/mongodb"
 )
 
 // Run creates objects via constructors.
@@ -33,7 +36,8 @@ func Run(cfg *config.Config) {
 	// Use case
 	userUseCase := services.NewUserUseCase(
 		repositories.NewUserRepo(mdb),
-		repositories.NewSaltRepo(mdb),
+		repositories.NewProfileRepo(mdb),
+		repositories.NewMovieTagRepo(mdb),
 		nil,
 	)
 
@@ -47,7 +51,17 @@ func Run(cfg *config.Config) {
 
 	// HTTP Server
 	handler := gin.New()
-	v1.NewRouter(handler, l, userUseCase)
+
+	corsConfig := cors.New(cors.Config{
+		AllowOrigins:     cfg.HTTP.AllowedOrigins,
+		AllowMethods:     []string{http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodHead, http.MethodDelete, http.MethodOptions},
+		AllowHeaders:     []string{"Content-Type", "X-XSRF-TOKEN", "Accept", "Origin", "X-Requested-With", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	})
+	handler.Use(corsConfig)
+
+	v1.NewRouter(handler, l, userUseCase, corsConfig)
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
 
 	// Waiting signal

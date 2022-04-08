@@ -4,6 +4,12 @@ app:
 
 http:
   port: '9000'
+  allowed-origins:
+    - 'http://localhost:4200'
+    - 'https://micflix-platform.krekels-server.com'
+    - 'https://micflix-data.krekels-server.com'
+
+  
 
 logger:
   log_level: 'debug'
@@ -15,9 +21,3 @@ logger:
 # rabbitmq:
 #   rpc_server_exchange: 'rpc_server'
 #   rpc_client_exchange: 'rpc_client'
-
-mongodb:
-  username : 'Mickey'
-  password : '6TTbNyaZvUxXMQA0'
-  cluster : 'fontysprojects.b76fa.azure.mongodb.net'
-  database : 'Micflix'

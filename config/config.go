@@ -25,7 +25,8 @@ type (
 
 	// HTTP -.
 	HTTP struct {
-		Port string `env-required:"true" yaml:"port" env:"HTTP_PORT"`
+		Port           string   `env-required:"true" yaml:"port" env:"HTTP_PORT"`
+		AllowedOrigins []string `env-required:"true" yaml:"allowed-origins" env:"ALLOWED_ORIGINS"`
 	}
 
 	// Log -.

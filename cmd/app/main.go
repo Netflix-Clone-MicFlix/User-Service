@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/Netflix-Clone-MicFlix/User-Service/config"
-	"github.com/Netflix-Clone-MicFlix/User-Service/internal/app"
+	"github.com/Netflix-Clone-MicFlix/User-service/config"
+	"github.com/Netflix-Clone-MicFlix/User-service/internal/app"
 )
 
 func main() {

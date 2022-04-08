@@ -5,13 +5,13 @@ import (
 
 	"fmt"
 
-	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
-	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/mongodb"
-	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/security"
+	"github.com/Netflix-Clone-MicFlix/User-service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-service/pkg/mongodb"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const userCollectionName = "users"
+const UserCollectionName = "Users"
 
 // UserRepo -.
 type UserRepo struct {
@@ -26,62 +26,63 @@ func NewUserRepo(mdb *mongodb.MongoDB) *UserRepo {
 // GetAll -.
 func (ur *UserRepo) GetAll(ctx context.Context) ([]entity.User, error) {
 
-	users := []entity.User{}
+	Users := []entity.User{}
 
-	collection := ur.Database.Collection(userCollectionName)
+	collection := ur.Database.Collection(UserCollectionName)
 
 	var filter bson.M = bson.M{}
 	curr, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, fmt.Errorf("UserRepo - GetAll - rows.Scan: %w", err)
 	}
-	if err = curr.All(context.Background(), &users); err != nil {
+	if err = curr.All(context.Background(), &Users); err != nil {
 		return nil, fmt.Errorf("UserRepo - GetAll - rows.Scan: %w", err)
 	}
 
-	return users, nil
+	return Users, nil
 }
 
 // GetById -.
-func (ur *UserRepo) GetById(ctx context.Context, user_id string) (entity.User, error) {
-	user := entity.User{}
+func (ur *UserRepo) GetById(ctx context.Context, User_id string) (entity.User, error) {
+	User := entity.User{}
 
-	var filter bson.M = bson.M{"_id": user_id}
-	curr, err := ur.Database.Collection(userCollectionName).Find(context.Background(), filter)
+	var filter bson.M = bson.M{"id": User_id}
+	curr, err := ur.Database.Collection(UserCollectionName).Find(context.Background(), filter)
 	if err != nil {
 		return entity.User{}, fmt.Errorf("UserRepo - GetById - rows.Scan: %w", err)
 	}
 	defer curr.Close(context.Background())
 
-	curr.All(context.Background(), &user)
+	curr.All(context.Background(), &User)
 
-	return user, nil
+	return User, nil
 }
 
 // Create -.
-func (ur *UserRepo) Create(ctx context.Context, user entity.User, salt []byte) error {
-	var hashedPassword = security.HashPassword(user.Password, salt)
+func (ur *UserRepo) Create(ctx context.Context, keycloak_id string) (entity.User, error) {
 
-	user.Password = hashedPassword
-	_, err := ur.Database.Collection(userCollectionName).InsertOne(context.Background(), user)
-	if err != nil {
-		return fmt.Errorf("UserRepo - Create - rows.Scan: %w", err)
+	guid := uuid.New().String()
+	User := entity.User{
+		Id:         guid,
+		KeycloakId: keycloak_id,
 	}
-	return nil
+
+	_, err := ur.Database.Collection(UserCollectionName).InsertOne(context.Background(), User)
+	if err != nil {
+		return entity.User{}, fmt.Errorf("UserRepo - Create - rows.Scan: %w", err)
+	}
+	return User, nil
 }
 
 // Update -.
-func (ur *UserRepo) Update(ctx context.Context, user_id string, user entity.User, salt []byte) error {
+func (ur *UserRepo) Update(ctx context.Context, User_id string, User entity.User) error {
 
-	var hashedPassword = security.HashPassword(user.Password, salt)
-	user.Password = hashedPassword
-	user.Id = user_id
+	User.Id = User_id
+	update := bson.M{"$set": User}
 
-	update := bson.M{"$set": user}
-
-	_, err := ur.Database.Collection(userCollectionName).UpdateOne(
+	_, err := ur.Database.Collection(UserCollectionName).UpdateOne(
 		context.Background(),
-		bson.M{"id": user_id},
+		bson.M{"id": User_id},
 		update)
 
 	if err != nil {
@@ -91,26 +92,13 @@ func (ur *UserRepo) Update(ctx context.Context, user_id string, user entity.User
 }
 
 // Delete -.
-func (ur *UserRepo) Delete(ctx context.Context, user_id string) error {
-	_, err := ur.Database.Collection(userCollectionName).DeleteOne(
+func (ur *UserRepo) Delete(ctx context.Context, User_id string) error {
+	_, err := ur.Database.Collection(UserCollectionName).DeleteOne(
 		context.Background(),
-		bson.M{"_id": user_id})
+		bson.M{"id": User_id})
 
 	if err != nil {
 		return fmt.Errorf("UserRepo - Delete - rows.Scan: %w", err)
 	}
 	return nil
-}
-
-// Login -.
-func (ur *UserRepo) Login(ctx context.Context, user entity.User) (entity.User, error) {
-	userdb := entity.User{}
-
-	var filter bson.M = bson.M{"email": user.Email}
-	err := ur.Database.Collection(userCollectionName).FindOne(context.Background(), filter).Decode(&userdb)
-	if err != nil {
-		return entity.User{}, fmt.Errorf("UserRepo - Login - rows.Scan: %w", err)
-	}
-
-	return userdb, nil
 }

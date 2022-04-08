@@ -17,7 +17,7 @@ type MongoDB struct {
 
 func New(username string, password string, cluster string, database string) (*MongoDB, error) {
 
-	cl, err := getMongoDbconn(username, password, cluster, database)
+	cl, err := getMongoDbconn(username, password, cluster)
 
 	if err != nil {
 		log.Fatal(err)
@@ -34,13 +34,16 @@ func New(username string, password string, cluster string, database string) (*Mo
 	return mdb, err
 }
 
-func getMongoDbconn(username string, password string, cluster string, database string) (*mongo.Client, error) {
+func getMongoDbconn(username string, password string, cluster string) (*mongo.Client, error) {
 
-	uri := "mongodb+srv://" + url.QueryEscape(username) + ":" +
-		url.QueryEscape(password) + "@" + cluster + "/" + database +
-		"?retryWrites=true&w=majority"
+	// uri := "mongodb://" + url.QueryEscape(username) + ":" +
+	// 	url.QueryEscape(password) + "@" + cluster + "/" + database
+	// print(uri)
 
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
+	uri_2 := "mongodb://" + url.QueryEscape(username) + ":" +
+		url.QueryEscape(password) + "@" + cluster + ":27017/"
+
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri_2))
 
 	if err != nil {
 		log.Fatal(err)

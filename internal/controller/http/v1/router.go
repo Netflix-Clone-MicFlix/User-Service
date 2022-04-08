@@ -10,9 +10,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	// Swagger docs.
-	_ "github.com/Netflix-Clone-MicFlix/User-Service/docs"
-	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
-	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
+	_ "github.com/Netflix-Clone-MicFlix/User-service/docs"
+	"github.com/Netflix-Clone-MicFlix/User-service/internal"
+	"github.com/Netflix-Clone-MicFlix/User-service/pkg/logger"
 )
 
 // NewRouter -.
@@ -22,7 +22,7 @@ import (
 // @version     1.0
 // @host        localhost:8080
 // @BasePath    /v1
-func NewRouter(handler *gin.Engine, l logger.Interface, t internal.User) {
+func NewRouter(handler *gin.Engine, l logger.Interface, t internal.User, corsConfig gin.HandlerFunc) {
 	// Options
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
@@ -40,6 +40,6 @@ func NewRouter(handler *gin.Engine, l logger.Interface, t internal.User) {
 	// Routers
 	h := handler.Group("/v1")
 	{
-		newUserRoutes(h, t, l)
+		newUserRoutes(h, t, l, corsConfig)
 	}
 }

@@ -12,6 +12,7 @@ config/config.yml
 *.dll
 *.so
 *.dylib
+docker-compose.yml
 
 # Test binary, built with `go test -c`
 *.test
