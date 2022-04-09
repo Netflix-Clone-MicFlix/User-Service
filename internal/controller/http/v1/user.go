@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
-	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
 	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
 )
 
@@ -34,9 +33,6 @@ func newUserRoutes(handler *gin.RouterGroup, t internal.User, l logger.Interface
 
 }
 
-type userCollectionResponse struct {
-	Users []entity.User `json:"users"`
-}
 type CreateUserRequest struct {
 	Id         string   `json:"id"    example:"6be244a7-25ac-34ce-31e3-04157d3d42e3"`
 	KeycloakId string   `json:"keycloak_id"    example:"6be244a7-25ac-34ce-31e3-04157d3d42e3"`
@@ -61,7 +57,7 @@ func (r *UserRoutes) GetAll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, userCollectionResponse{users})
+	c.JSON(http.StatusOK, users)
 }
 
 // @Summary     Show user with id
