@@ -47,13 +47,11 @@ func (ur *ProfileRepo) GetById(ctx context.Context, Profile_id string) (entity.P
 	Profile := entity.Profile{}
 
 	var filter bson.M = bson.M{"id": Profile_id}
-	curr, err := ur.Database.Collection(ProfileCollectionName).Find(context.Background(), filter)
-	if err != nil {
-		return entity.Profile{}, fmt.Errorf("ProfileRepo - GetById - rows.Scan: %w", err)
-	}
-	defer curr.Close(context.Background())
+	collection := ur.Database.Collection(ProfileCollectionName)
 
-	curr.All(context.Background(), &Profile)
+	if err := collection.FindOne(ctx, filter).Decode(&Profile); err != nil {
+		return entity.Profile{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+	}
 
 	return Profile, nil
 }

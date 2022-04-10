@@ -47,13 +47,11 @@ func (ur *MovieTagRepo) GetById(ctx context.Context, MovieTag_id string) (entity
 	MovieTag := entity.MovieTag{}
 
 	var filter bson.M = bson.M{"id": MovieTag_id}
-	curr, err := ur.Database.Collection(MovieTagCollectionName).Find(context.Background(), filter)
-	if err != nil {
-		return entity.MovieTag{}, fmt.Errorf("MovieTagRepo - GetById - rows.Scan: %w", err)
-	}
-	defer curr.Close(context.Background())
+	collection := ur.Database.Collection(MovieTagCollectionName)
 
-	curr.All(context.Background(), &MovieTag)
+	if err := collection.FindOne(ctx, filter).Decode(&MovieTag); err != nil {
+		return entity.MovieTag{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+	}
 
 	return MovieTag, nil
 }

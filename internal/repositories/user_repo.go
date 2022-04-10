@@ -46,14 +46,12 @@ func (ur *UserRepo) GetAll(ctx context.Context) ([]entity.User, error) {
 func (ur *UserRepo) GetById(ctx context.Context, User_id string) (entity.User, error) {
 	User := entity.User{}
 
-	var filter bson.M = bson.M{"id": User_id}
-	curr, err := ur.Database.Collection(UserCollectionName).Find(context.Background(), filter)
-	if err != nil {
-		return entity.User{}, fmt.Errorf("UserRepo - GetById - rows.Scan: %w", err)
-	}
-	defer curr.Close(context.Background())
+	collection := ur.Database.Collection(UserCollectionName)
 
-	curr.All(context.Background(), &User)
+	var filter bson.M = bson.M{"id": User_id}
+	if err := collection.FindOne(ctx, filter).Decode(&User); err != nil {
+		return entity.User{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+	}
 
 	return User, nil
 }
