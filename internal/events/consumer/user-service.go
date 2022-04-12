@@ -60,13 +60,12 @@ func handleUserServiceEvents(messages <-chan amqp.Delivery, user internal.User) 
 	for message := range messages {
 
 		log.Printf("Received a message: %s", message.Body)
-		log.Printf("message Type: %s", message.Type)
 
-		switch message.Type {
+		// switch message.Type {
 
-		case "KK.EVENT.ADMIN.micflix.SUCCESS.USER.CREATE":
-			CreateUser(message, user)
-		}
+		// case "KK.EVENT.ADMIN.micflix.SUCCESS.USER.CREATE":
+		CreateUser(message, user)
+		// }
 	}
 }
 

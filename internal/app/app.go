@@ -42,7 +42,6 @@ func Run(cfg *config.Config) {
 		repositories.NewMovieTagRepo(mdb),
 		nil,
 	)
-	print(cfg.RMQ.URL)
 
 	// RabbitMQ RPC Server
 	connectRabbitMQ, err := amqp.Dial(cfg.RMQ.URL)
@@ -51,16 +50,12 @@ func Run(cfg *config.Config) {
 	}
 	defer connectRabbitMQ.Close()
 
-	print("connection to RabbitMQ Succesfull")
-
 	// Opening a channel to our RabbitMQ instance
 	channelRabbitMQ, err := connectRabbitMQ.Channel()
 	if err != nil {
 		panic(err)
 	}
 	defer channelRabbitMQ.Close()
-
-	print("connection to RabbitMQ Channel Succesfull")
 
 	// Events
 	go external.NewUserServiceEvents(channelRabbitMQ, userUseCase)
