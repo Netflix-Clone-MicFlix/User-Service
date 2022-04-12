@@ -13,7 +13,7 @@ type (
 		HTTP `yaml:"http"`
 		Log  `yaml:"logger"`
 		// PG   `yaml:"postgres"`
-		// RMQ  `yaml:"rabbitmq"`
+		RMQ `yaml:"rabbitmq"`
 		MDB `yaml:"mongodb"`
 	}
 
@@ -40,12 +40,11 @@ type (
 	// 	// URL     string `env-required:"true"                 env:"PG_URL"`
 	// }
 
-	// // RMQ -.
-	// RMQ struct {
-	// 	ServerExchange string `env-required:"true" yaml:"rpc_server_exchange" env:"RMQ_RPC_SERVER"`
-	// 	ClientExchange string `env-required:"true" yaml:"rpc_client_exchange" env:"RMQ_RPC_CLIENT"`
-	// 	// URL            string `env-required:"true"                            env:"RMQ_URL"`
-	// }
+	// RMQ -.
+	RMQ struct {
+		URL   string `env-required:"true" yaml:"url"    env:"RABBITMQ_URL"`
+		QUEUE string `env-required:"true" yaml:"queue"  env:"RABBITMQ_QUEUE"`
+	}
 	MDB struct {
 		Username string `env-required:"true" yaml:"username" env:"MDB_USERNAME"`
 		Password string `env-required:"true" yaml:"password" env:"MDB_PASSWORD"`

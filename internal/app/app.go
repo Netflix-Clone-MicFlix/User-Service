@@ -9,8 +9,10 @@ import (
 
 	"net/http"
 
+	external "github.com/Netflix-Clone-MicFlix/User-Service/internal/events/consumer"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/streadway/amqp"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/config"
 	v1 "github.com/Netflix-Clone-MicFlix/User-Service/internal/controller/http/v1"
@@ -40,14 +42,28 @@ func Run(cfg *config.Config) {
 		repositories.NewMovieTagRepo(mdb),
 		nil,
 	)
+	print(cfg.RMQ.URL)
 
 	// RabbitMQ RPC Server
-	// rmqRouter := amqprpc.NewRouter(userUseCase)
+	connectRabbitMQ, err := amqp.Dial(cfg.RMQ.URL)
+	if err != nil {
+		panic(err)
+	}
+	defer connectRabbitMQ.Close()
 
-	// rmqServer, err := server.New(cfg.RMQ.URL, cfg.RMQ.ServerExchange, l)
-	// if err != nil {
-	// 	l.Fatal(fmt.Errorf("app - Run - rmqServer - server.New: %w", err))
-	// }
+	print("connection to RabbitMQ Succesfull")
+
+	// Opening a channel to our RabbitMQ instance
+	channelRabbitMQ, err := connectRabbitMQ.Channel()
+	if err != nil {
+		panic(err)
+	}
+	defer channelRabbitMQ.Close()
+
+	print("connection to RabbitMQ Channel Succesfull")
+
+	// Events
+	go external.NewUserServiceEvents(channelRabbitMQ, userUseCase)
 
 	// HTTP Server
 	handler := gin.New()

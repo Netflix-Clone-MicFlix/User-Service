@@ -16,6 +16,6 @@ logger:
 # postgres:
 #   pool_max: 2
 
-# rabbitmq:
-#   rpc_server_exchange: 'rpc_server'
-#   rpc_client_exchange: 'rpc_client'
+rabbitmq:
+  url: 'amqp://guest:guest@rabbitmq:5672/'
+  queue: 'user-service'
