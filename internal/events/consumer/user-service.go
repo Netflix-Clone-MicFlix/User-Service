@@ -60,10 +60,11 @@ func handleUserServiceEvents(messages <-chan amqp.Delivery, user internal.User) 
 	for message := range messages {
 
 		log.Printf("Received a message: %s", message.Body)
+		log.Printf("message Type: %s", message.Type)
 
 		switch message.Type {
 
-		case "com.github.aznamier.keycloak.event.provider.EventAdminNotificationMqMsg":
+		case "KK.EVENT.ADMIN.micflix.SUCCESS.USER.CREATE":
 			CreateUser(message, user)
 		}
 	}
