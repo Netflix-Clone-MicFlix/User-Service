@@ -63,7 +63,7 @@ func handleUserServiceEvents(messages <-chan amqp.Delivery, user internal.User) 
 
 		switch message.Type {
 
-		case "CreateUser":
+		case "com.github.aznamier.keycloak.event.provider.EventAdminNotificationMqMsg":
 			CreateUser(message, user)
 		}
 	}
@@ -90,7 +90,7 @@ func CreateUser(message amqp.Delivery, user internal.User) error {
 	log.Printf("UserCreated: %s", KeycloakMessage)
 
 	result := strings.Split(KeycloakMessage.ResourcePath, "/")
-	keycloakId := result[1]
+	keycloakId := result[1] //<- splits the id from the url   "users/f0576ce0-4335-4b83-883c-f26d6a6c4aac"
 
 	// Create the user
 	err = user.Create(context.Background(), keycloakId)
