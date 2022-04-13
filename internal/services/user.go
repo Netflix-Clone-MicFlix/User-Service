@@ -68,7 +68,7 @@ func (uc *UserUseCase) Create(ctx context.Context, keycloak_id string) error {
 		name := "profile_" + strconv.Itoa(i)
 
 		profile := entity.Profile{
-			UserId:      user.Id,
+			UserId:      user.KeycloakId,
 			Name:        name,
 			MovieTagIds: []string{},
 		}
