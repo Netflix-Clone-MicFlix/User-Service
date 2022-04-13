@@ -1,4 +1,4 @@
-package external
+package consumer
 
 import (
 	"context"
@@ -61,39 +61,52 @@ func handleUserServiceEvents(messages <-chan amqp.Delivery, user internal.User) 
 
 		log.Printf("Received a message: %s", message.Body)
 
-		// switch message.Type {
+		// populate the message
+		KeycloakMessage := KeycloakMessage{}
 
-		// case "KK.EVENT.ADMIN.micflix.SUCCESS.USER.CREATE":
-		CreateUser(message, user)
-		// }
+		// serialize the message
+		err := json.Unmarshal(message.Body, &KeycloakMessage)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		if KeycloakMessage.OperationType == "CREATE" {
+			CreateUser(KeycloakMessage.ResourcePath, user)
+		}
+		if KeycloakMessage.OperationType == "DELETE" {
+			DeleteUser(KeycloakMessage.ResourcePath, user)
+		}
+
 	}
 }
 
 type KeycloakMessage struct {
-	ResourcePath string `json:"resourcePath"`
+	ResourcePath  string `json:"resourcePath"`
+	OperationType string `json:"operationType"`
 }
 
-func CreateUser(message amqp.Delivery, user internal.User) error {
-	log.Printf("SurveyDeleted received a message: %s", message.Body)
+func CreateUser(resourcePath string, user internal.User) error {
 
-	// populate the message
-	KeycloakMessage := KeycloakMessage{}
+	result := strings.Split(resourcePath, "/")
+	keycloakId := result[1] //<- splits the id from the url   "users/f0576ce0-4335-4b83-883c-f26d6a6c4aac"
 
-	// serialize the message
-	err := json.Unmarshal(message.Body, &KeycloakMessage)
+	// Create the user
+	err := user.Create(context.Background(), keycloakId)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	// print the message
-	log.Printf("UserCreated: %s", KeycloakMessage)
+	return nil
+}
 
-	result := strings.Split(KeycloakMessage.ResourcePath, "/")
+func DeleteUser(resourcePath string, user internal.User) error {
+
+	result := strings.Split(resourcePath, "/")
 	keycloakId := result[1] //<- splits the id from the url   "users/f0576ce0-4335-4b83-883c-f26d6a6c4aac"
 
 	// Create the user
-	err = user.Create(context.Background(), keycloakId)
+	err := user.Delete(context.Background(), keycloakId)
 	if err != nil {
 		log.Println(err)
 		return err

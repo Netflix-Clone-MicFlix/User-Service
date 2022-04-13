@@ -56,6 +56,20 @@ func (ur *UserRepo) GetById(ctx context.Context, User_id string) (entity.User, e
 	return User, nil
 }
 
+// GetById -.
+func (ur *UserRepo) GetByKeycloakId(ctx context.Context, keycloak_id string) (entity.User, error) {
+	User := entity.User{}
+
+	collection := ur.Database.Collection(UserCollectionName)
+
+	var filter bson.M = bson.M{"keycloak_id": keycloak_id}
+	if err := collection.FindOne(ctx, filter).Decode(&User); err != nil {
+		return entity.User{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+	}
+
+	return User, nil
+}
+
 // Create -.
 func (ur *UserRepo) Create(ctx context.Context, keycloak_id string) (entity.User, error) {
 
@@ -90,10 +104,10 @@ func (ur *UserRepo) Update(ctx context.Context, User_id string, User entity.User
 }
 
 // Delete -.
-func (ur *UserRepo) Delete(ctx context.Context, User_id string) error {
+func (ur *UserRepo) Delete(ctx context.Context, user_id string) error {
 	_, err := ur.Database.Collection(UserCollectionName).DeleteOne(
 		context.Background(),
-		bson.M{"id": User_id})
+		bson.M{"id": user_id})
 
 	if err != nil {
 		return fmt.Errorf("UserRepo - Delete - rows.Scan: %w", err)

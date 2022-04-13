@@ -6,17 +6,19 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+	auth "github.com/Netflix-Clone-MicFlix/User-Service/internal/authorization"
 	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/logger"
 )
 
 type UserRoutes struct {
-	t          internal.User
-	l          logger.Interface
-	corsConfig gin.HandlerFunc
+	jwtKeycloak *auth.JwtKeycloak
+	t           internal.User
+	l           logger.Interface
+	corsConfig  gin.HandlerFunc
 }
 
-func newUserRoutes(handler *gin.RouterGroup, t internal.User, l logger.Interface, corsConfig gin.HandlerFunc) {
-	r := &UserRoutes{t, l, corsConfig}
+func newUserRoutes(handler *gin.RouterGroup, jwtKeycloak *auth.JwtKeycloak, t internal.User, l logger.Interface, corsConfig gin.HandlerFunc) {
+	r := &UserRoutes{jwtKeycloak, t, l, corsConfig}
 
 	user := handler.Group("/user")
 	{

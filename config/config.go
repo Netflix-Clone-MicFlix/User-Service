@@ -12,9 +12,9 @@ type (
 		App  `yaml:"app"`
 		HTTP `yaml:"http"`
 		Log  `yaml:"logger"`
-		// PG   `yaml:"postgres"`
-		RMQ `yaml:"rabbitmq"`
-		MDB `yaml:"mongodb"`
+		AUTH `yaml:"authentication"`
+		RMQ  `yaml:"rabbitmq"`
+		MDB  `yaml:"mongodb"`
 	}
 
 	// App -.
@@ -34,17 +34,18 @@ type (
 		Level string `env-required:"true" yaml:"log_level"   env:"LOG_LEVEL"`
 	}
 
-	// // PG -.
-	// PG struct {
-	// 	PoolMax int `env-required:"true" yaml:"pool_max" env:"PG_POOL_MAX"`
-	// 	// URL     string `env-required:"true"                 env:"PG_URL"`
-	// }
+	//keycloak auth
+	AUTH struct {
+		Secret string `env-required:"true" yaml:"secret" env:"AUTHENTICATION_SECRET"`
+	}
 
 	// RMQ -.
 	RMQ struct {
 		URL   string `env-required:"true" yaml:"url"    env:"RABBITMQ_URL"`
 		QUEUE string `env-required:"true" yaml:"queue"  env:"RABBITMQ_QUEUE"`
 	}
+
+	//mongodb
 	MDB struct {
 		Username string `env-required:"true" yaml:"username" env:"MDB_USERNAME"`
 		Password string `env-required:"true" yaml:"password" env:"MDB_PASSWORD"`

@@ -15,6 +15,7 @@ import (
 	"github.com/streadway/amqp"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/config"
+	auth "github.com/Netflix-Clone-MicFlix/User-Service/internal/authorization"
 	v1 "github.com/Netflix-Clone-MicFlix/User-Service/internal/controller/http/v1"
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal/repositories"
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal/services"
@@ -35,13 +36,16 @@ func Run(cfg *config.Config) {
 		l.Fatal(fmt.Errorf("app - Run - postgres.New: %w", err))
 	}
 
-	// Use case
+	// Usecase
 	userUseCase := services.NewUserUseCase(
 		repositories.NewUserRepo(mdb),
 		repositories.NewProfileRepo(mdb),
 		repositories.NewMovieTagRepo(mdb),
 		nil,
 	)
+
+	//keycloak
+	jwtKeycloak := auth.NewJwtKeycloak(cfg, l)
 
 	// RabbitMQ RPC Server
 	connectRabbitMQ, err := amqp.Dial(cfg.RMQ.URL)
@@ -72,7 +76,8 @@ func Run(cfg *config.Config) {
 	})
 	handler.Use(corsConfig)
 
-	v1.NewRouter(handler, l, userUseCase, corsConfig)
+	//creating new controller router
+	v1.NewRouter(handler, jwtKeycloak, l, userUseCase, corsConfig)
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
 
 	// Waiting signal
@@ -84,8 +89,6 @@ func Run(cfg *config.Config) {
 		l.Info("app - Run - signal: " + s.String())
 	case err = <-httpServer.Notify():
 		l.Error(fmt.Errorf("app - Run - httpServer.Notify: %w", err))
-		// case err = <-rmqServer.Notify():
-		// 	l.Error(fmt.Errorf("app - Run - rmqServer.Notify: %w", err))
 	}
 
 	// Shutdown
@@ -93,9 +96,4 @@ func Run(cfg *config.Config) {
 	if err != nil {
 		l.Error(fmt.Errorf("app - Run - httpServer.Shutdown: %w", err))
 	}
-
-	// err = rmqServer.Shutdown()
-	// if err != nil {
-	// 	l.Error(fmt.Errorf("app - Run - rmqServer.Shutdown: %w", err))
-	// }
 }

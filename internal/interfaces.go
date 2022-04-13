@@ -12,14 +12,16 @@ import (
 type (
 	// User -.
 	User interface {
+		GetAllProfilesById(context.Context, string) ([]entity.Profile, error)
 		GetById(context.Context, string) (entity.User, error)
 		GetAll(context.Context) ([]entity.User, error)
 		Create(context.Context, string) error
-		GetAllProfilesById(context.Context, string) ([]entity.Profile, error)
+		Delete(context.Context, string) error
 	}
 
 	// UserRepo -.
 	UserRepo interface {
+		GetByKeycloakId(context.Context, string) (entity.User, error)
 		GetById(context.Context, string) (entity.User, error)
 		GetAll(context.Context) ([]entity.User, error)
 		Create(context.Context, string) (entity.User, error)

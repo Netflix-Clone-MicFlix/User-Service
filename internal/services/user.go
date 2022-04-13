@@ -48,7 +48,7 @@ func (uc *UserUseCase) GetAll(ctx context.Context) ([]entity.User, error) {
 	return Users, nil
 }
 
-// Create - Create genre-.
+// Create - Create user-.
 func (uc *UserUseCase) Create(ctx context.Context, keycloak_id string) error {
 
 	if keycloak_id == "" {
@@ -68,7 +68,7 @@ func (uc *UserUseCase) Create(ctx context.Context, keycloak_id string) error {
 		name := "profile_" + strconv.Itoa(i)
 
 		profile := entity.Profile{
-			UserId:      user.KeycloakId,
+			UserId:      user.Id,
 			Name:        name,
 			MovieTagIds: []string{},
 		}
@@ -98,4 +98,48 @@ func (uc *UserUseCase) GetAllProfilesById(ctx context.Context, User_id string) (
 	}
 
 	return Profiles, nil
+}
+
+// Delete - Delete user-.
+func (uc *UserUseCase) Delete(ctx context.Context, keycloak_id string) error {
+
+	if keycloak_id == "" {
+		return fmt.Errorf("UserUseCase - Delete - s.UserRepo.Store: No values provided")
+	}
+
+	user, err := uc.UserRepo.GetByKeycloakId(context.Background(), keycloak_id)
+	if err != nil {
+		return fmt.Errorf("UserUseCase - Delete - s.UserRepo.Store: %w", err)
+	}
+
+	profileAmount := len(user.ProfileIds)
+	for i := 0; i < profileAmount; i++ {
+
+		profileId := user.ProfileIds[i]
+
+		profile, err := uc.ProfileRepo.GetById(context.Background(), profileId)
+		if err != nil {
+			return fmt.Errorf("UserUseCase - Create - s.UserRepo.Store: %w", err)
+		}
+		movieTagAmount := len(profile.MovieTagIds)
+		for j := 0; j < movieTagAmount; j++ {
+			movieTagId := profile.MovieTagIds[j]
+			err = uc.MovieTagRepo.Delete(context.Background(), movieTagId)
+			if err != nil {
+				return fmt.Errorf("UserUseCase - Create - s.UserRepo.Store: %w", err)
+			}
+		}
+
+		err = uc.ProfileRepo.Delete(context.Background(), profileId)
+		if err != nil {
+			return fmt.Errorf("UserUseCase - Create - s.UserRepo.Store: %w", err)
+		}
+	}
+
+	err = uc.UserRepo.Delete(context.Background(), user.Id)
+	if err != nil {
+		return fmt.Errorf("UserUseCase - Delete - s.UserRepo.Store: %w", err)
+	}
+
+	return nil
 }
