@@ -50,7 +50,7 @@ func (ur *UserRepo) GetById(ctx context.Context, User_id string) (entity.User, e
 
 	var filter bson.M = bson.M{"id": User_id}
 	if err := collection.FindOne(ctx, filter).Decode(&User); err != nil {
-		return entity.User{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+		return entity.User{}, fmt.Errorf("UserRepo - GetById - rows.Scan: %w", err)
 	}
 
 	return User, nil
@@ -62,9 +62,9 @@ func (ur *UserRepo) GetByKeycloakId(ctx context.Context, keycloak_id string) (en
 
 	collection := ur.Database.Collection(UserCollectionName)
 
-	var filter bson.M = bson.M{"keycloak_id": keycloak_id}
+	var filter bson.M = bson.M{"keycloakid": keycloak_id}
 	if err := collection.FindOne(ctx, filter).Decode(&User); err != nil {
-		return entity.User{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+		return entity.User{}, fmt.Errorf("UserRepo - GetByKeycloakId - rows.Scan: %w", err)
 	}
 
 	return User, nil
