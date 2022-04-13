@@ -50,7 +50,7 @@ func (ur *MovieTagRepo) GetById(ctx context.Context, MovieTag_id string) (entity
 	collection := ur.Database.Collection(MovieTagCollectionName)
 
 	if err := collection.FindOne(ctx, filter).Decode(&MovieTag); err != nil {
-		return entity.MovieTag{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+		return entity.MovieTag{}, fmt.Errorf("MovieTagRepo - GetById - rows.Scan: %w", err)
 	}
 
 	return MovieTag, nil

@@ -119,20 +119,20 @@ func (uc *UserUseCase) Delete(ctx context.Context, keycloak_id string) error {
 
 		profile, err := uc.ProfileRepo.GetById(context.Background(), profileId)
 		if err != nil {
-			return fmt.Errorf("UserUseCase - Create - s.UserRepo.Store: %w", err)
+			return fmt.Errorf("UserUseCase - Delete - s.UserRepo.Store: %w", err)
 		}
 		movieTagAmount := len(profile.MovieTagIds)
 		for j := 0; j < movieTagAmount; j++ {
 			movieTagId := profile.MovieTagIds[j]
 			err = uc.MovieTagRepo.Delete(context.Background(), movieTagId)
 			if err != nil {
-				return fmt.Errorf("UserUseCase - Create - s.UserRepo.Store: %w", err)
+				return fmt.Errorf("UserUseCase - Delete - s.UserRepo.Store: %w", err)
 			}
 		}
 
 		err = uc.ProfileRepo.Delete(context.Background(), profileId)
 		if err != nil {
-			return fmt.Errorf("UserUseCase - Create - s.UserRepo.Store: %w", err)
+			return fmt.Errorf("UserUseCase - Delete - s.UserRepo.Store: %w", err)
 		}
 	}
 

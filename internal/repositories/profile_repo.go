@@ -50,7 +50,7 @@ func (ur *ProfileRepo) GetById(ctx context.Context, Profile_id string) (entity.P
 	collection := ur.Database.Collection(ProfileCollectionName)
 
 	if err := collection.FindOne(ctx, filter).Decode(&Profile); err != nil {
-		return entity.Profile{}, fmt.Errorf("MovieRepo - GetAll - rows.Scan: %w", err)
+		return entity.Profile{}, fmt.Errorf("ProfileRepo - GetById - rows.Scan: %w", err)
 	}
 
 	return Profile, nil
