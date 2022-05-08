@@ -18,9 +18,7 @@ func TestJwtKeycloak_ExtractToken(t *testing.T) {
 		m    *JwtKeycloak
 		args args
 		want string
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.m.ExtractToken(tt.args.r); got != tt.want {
@@ -40,9 +38,7 @@ func TestJwtKeycloak_VerifyToken(t *testing.T) {
 		args    args
 		want    *jwt.Token
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.m.VerifyToken(tt.args.r)
@@ -66,9 +62,7 @@ func TestJwtKeycloak_TokenValid(t *testing.T) {
 		m       *JwtKeycloak
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.m.TokenValid(tt.args.r); (err != nil) != tt.wantErr {
@@ -86,9 +80,7 @@ func TestJwtKeycloak_TokenAuthMiddleware(t *testing.T) {
 		name string
 		m    *JwtKeycloak
 		args args
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.m.TokenAuthMiddleware(tt.args.c)
@@ -106,9 +98,7 @@ func TestJwtKeycloak_ExtractTokenMetadata(t *testing.T) {
 		args    args
 		want    *AccessDetails
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.m.ExtractTokenMetadata(tt.args.r)

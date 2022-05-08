@@ -17,9 +17,7 @@ func TestNewUserServiceEvents(t *testing.T) {
 		args    args
 		want    bool
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := NewUserServiceEvents(tt.args.channel, tt.args.user)
@@ -42,9 +40,7 @@ func Test_handleUserServiceEvents(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			handleUserServiceEvents(tt.args.messages, tt.args.user)
@@ -61,9 +57,7 @@ func TestCreateUser(t *testing.T) {
 		name    string
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := CreateUser(tt.args.resourcePath, tt.args.user); (err != nil) != tt.wantErr {
@@ -82,9 +76,7 @@ func TestDeleteUser(t *testing.T) {
 		name    string
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := DeleteUser(tt.args.resourcePath, tt.args.user); (err != nil) != tt.wantErr {

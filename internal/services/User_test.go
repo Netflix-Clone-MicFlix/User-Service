@@ -19,9 +19,7 @@ func TestUserUseCase_GetById(t *testing.T) {
 		args    args
 		want    entity.User
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.uc.GetById(tt.args.ctx, tt.args.User_id)
@@ -46,9 +44,7 @@ func TestUserUseCase_GetAll(t *testing.T) {
 		args    args
 		want    []entity.User
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.uc.GetAll(tt.args.ctx)
@@ -73,9 +69,7 @@ func TestUserUseCase_Create(t *testing.T) {
 		uc      *UserUseCase
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.uc.Create(tt.args.ctx, tt.args.keycloak_id); (err != nil) != tt.wantErr {
@@ -96,9 +90,7 @@ func TestUserUseCase_GetAllProfilesById(t *testing.T) {
 		args    args
 		want    []entity.Profile
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.uc.GetAllProfilesById(tt.args.ctx, tt.args.User_id)
@@ -123,9 +115,7 @@ func TestUserUseCase_Delete(t *testing.T) {
 		uc      *UserUseCase
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.uc.Delete(tt.args.ctx, tt.args.keycloak_id); (err != nil) != tt.wantErr {

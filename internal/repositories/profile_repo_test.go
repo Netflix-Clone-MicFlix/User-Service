@@ -18,9 +18,7 @@ func TestProfileRepo_GetAll(t *testing.T) {
 		args    args
 		want    []entity.Profile
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.GetAll(tt.args.ctx)
@@ -46,9 +44,7 @@ func TestProfileRepo_GetById(t *testing.T) {
 		args    args
 		want    entity.Profile
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.GetById(tt.args.ctx, tt.args.Profile_id)
@@ -74,9 +70,7 @@ func TestProfileRepo_GetAllById(t *testing.T) {
 		args    args
 		want    []entity.Profile
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.GetAllById(tt.args.ctx, tt.args.user_id)
@@ -102,9 +96,7 @@ func TestProfileRepo_Create(t *testing.T) {
 		args    args
 		want    entity.Profile
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.Create(tt.args.ctx, tt.args.Profile)
@@ -130,9 +122,7 @@ func TestProfileRepo_Update(t *testing.T) {
 		ur      *ProfileRepo
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.ur.Update(tt.args.ctx, tt.args.Profile_id, tt.args.Profile); (err != nil) != tt.wantErr {
@@ -152,9 +142,7 @@ func TestProfileRepo_Delete(t *testing.T) {
 		ur      *ProfileRepo
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.ur.Delete(tt.args.ctx, tt.args.Profile_id); (err != nil) != tt.wantErr {

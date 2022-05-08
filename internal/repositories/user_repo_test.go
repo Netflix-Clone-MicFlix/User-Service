@@ -18,9 +18,7 @@ func TestUserRepo_GetAll(t *testing.T) {
 		args    args
 		want    []entity.User
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.GetAll(tt.args.ctx)
@@ -46,9 +44,7 @@ func TestUserRepo_GetById(t *testing.T) {
 		args    args
 		want    entity.User
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.GetById(tt.args.ctx, tt.args.User_id)
@@ -74,9 +70,7 @@ func TestUserRepo_GetByKeycloakId(t *testing.T) {
 		args    args
 		want    entity.User
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.GetByKeycloakId(tt.args.ctx, tt.args.keycloak_id)
@@ -102,9 +96,7 @@ func TestUserRepo_Create(t *testing.T) {
 		args    args
 		want    entity.User
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.ur.Create(tt.args.ctx, tt.args.keycloak_id)
@@ -130,9 +122,7 @@ func TestUserRepo_Update(t *testing.T) {
 		ur      *UserRepo
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.ur.Update(tt.args.ctx, tt.args.User_id, tt.args.User); (err != nil) != tt.wantErr {
@@ -152,9 +142,7 @@ func TestUserRepo_Delete(t *testing.T) {
 		ur      *UserRepo
 		args    args
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.ur.Delete(tt.args.ctx, tt.args.user_id); (err != nil) != tt.wantErr {
