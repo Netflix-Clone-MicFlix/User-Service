@@ -2,152 +2,101 @@ package repositories
 
 import (
 	"context"
-	"reflect"
 	"testing"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/services"
+	"github.com/Netflix-Clone-MicFlix/User-Service/mocks"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestProfileRepo_GetAll(t *testing.T) {
-	type args struct {
-		ctx context.Context
-	}
-	tests := []struct {
-		name    string
-		ur      *ProfileRepo
-		args    args
-		want    []entity.Profile
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.GetAll(tt.args.ctx)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ProfileRepo.GetAll() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ProfileRepo.GetAll() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	profilemock := entity.Profile{"test", id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	profileRepo := new(mocks.ProfileRepo)
+
+	profileRepo.On("GetAll", mock.AnythingOfType("*context.emptyCtx")).Return([]entity.Profile{profilemock}, nil)
+
+	service := services.NewUserUseCase(nil, profileRepo, nil, nil)
+	result, _ := service.ProfileRepo.GetAll(ctx)
+
+	assert.Equal(t, result, []entity.Profile{profilemock})
 }
 
 func TestProfileRepo_GetById(t *testing.T) {
-	type args struct {
-		ctx        context.Context
-		Profile_id string
-	}
-	tests := []struct {
-		name    string
-		ur      *ProfileRepo
-		args    args
-		want    entity.Profile
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.GetById(tt.args.ctx, tt.args.Profile_id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ProfileRepo.GetById() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ProfileRepo.GetById() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	profilemock := entity.Profile{"test", id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	profileRepo := new(mocks.ProfileRepo)
+
+	profileRepo.On("GetById", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).Return(profilemock, nil)
+
+	service := services.NewUserUseCase(nil, profileRepo, nil, nil)
+	result, _ := service.ProfileRepo.GetById(ctx, id)
+
+	assert.Equal(t, result, profilemock)
 }
 
 func TestProfileRepo_GetAllById(t *testing.T) {
-	type args struct {
-		ctx     context.Context
-		user_id string
-	}
-	tests := []struct {
-		name    string
-		ur      *ProfileRepo
-		args    args
-		want    []entity.Profile
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.GetAllById(tt.args.ctx, tt.args.user_id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ProfileRepo.GetAllById() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ProfileRepo.GetAllById() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	profilemock := entity.Profile{"test", id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	profileRepo := new(mocks.ProfileRepo)
+
+	profileRepo.On("GetAllById", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).Return([]entity.Profile{profilemock}, nil)
+
+	service := services.NewUserUseCase(nil, profileRepo, nil, nil)
+	result, _ := service.ProfileRepo.GetAllById(ctx, id)
+
+	assert.Equal(t, result, []entity.Profile{profilemock})
 }
 
 func TestProfileRepo_Create(t *testing.T) {
-	type args struct {
-		ctx     context.Context
-		Profile entity.Profile
-	}
-	tests := []struct {
-		name    string
-		ur      *ProfileRepo
-		args    args
-		want    entity.Profile
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.Create(tt.args.ctx, tt.args.Profile)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ProfileRepo.Create() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ProfileRepo.Create() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	profilemock := entity.Profile{"test", id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	profileRepo := new(mocks.ProfileRepo)
+
+	profileRepo.On("Create", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("entity.Profile")).Return(profilemock, nil)
+
+	service := services.NewUserUseCase(nil, profileRepo, nil, nil)
+	result, _ := service.ProfileRepo.Create(ctx, profilemock)
+
+	assert.Equal(t, result, profilemock)
 }
 
 func TestProfileRepo_Update(t *testing.T) {
-	type args struct {
-		ctx        context.Context
-		Profile_id string
-		Profile    entity.Profile
-	}
-	tests := []struct {
-		name    string
-		ur      *ProfileRepo
-		args    args
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.ur.Update(tt.args.ctx, tt.args.Profile_id, tt.args.Profile); (err != nil) != tt.wantErr {
-				t.Errorf("ProfileRepo.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	profilemock := entity.Profile{"test", id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	profileRepo := new(mocks.ProfileRepo)
+
+	profileRepo.On("Update", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string"), mock.AnythingOfType("entity.Profile")).Return(nil)
+
+	service := services.NewUserUseCase(nil, profileRepo, nil, nil)
+	result := service.ProfileRepo.Update(ctx, id, profilemock)
+
+	assert.NoError(t, result)
 }
 
 func TestProfileRepo_Delete(t *testing.T) {
-	type args struct {
-		ctx        context.Context
-		Profile_id string
-	}
-	tests := []struct {
-		name    string
-		ur      *ProfileRepo
-		args    args
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.ur.Delete(tt.args.ctx, tt.args.Profile_id); (err != nil) != tt.wantErr {
-				t.Errorf("ProfileRepo.Delete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	// profilemock := entity.Profile{"test", id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	profileRepo := new(mocks.ProfileRepo)
+
+	profileRepo.On("Delete", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).Return(nil)
+
+	service := services.NewUserUseCase(nil, profileRepo, nil, nil)
+	result := service.ProfileRepo.Delete(ctx, id)
+
+	assert.NoError(t, result)
 }

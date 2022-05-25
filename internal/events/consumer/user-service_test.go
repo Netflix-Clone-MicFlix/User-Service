@@ -4,32 +4,24 @@ import (
 	"testing"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+	"github.com/Netflix-Clone-MicFlix/User-Service/mocks"
+	"github.com/go-playground/assert/v2"
 	"github.com/streadway/amqp"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestNewUserServiceEvents(t *testing.T) {
-	type args struct {
-		channel *amqp.Channel
-		user    internal.User
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    bool
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewUserServiceEvents(tt.args.channel, tt.args.user)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewUserServiceEvents() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("NewUserServiceEvents() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	// usermock := entity.User{id, "test", []string{"test", "test"}}
+	// ctx := context.Background()
+
+	UserConsumer := new(mocks.UserConsumer)
+
+	UserConsumer.On("NewUserServiceEvents", mock.AnythingOfType("*amqp.Channel"), mock.AnythingOfType("internal.User")).Return(true, nil)
+
+	result, _ := UserConsumer.NewUserServiceEvents(amqp.Channel{}, nil)
+
+	assert.Equal(t, result, "true")
 }
 
 func Test_handleUserServiceEvents(t *testing.T) {

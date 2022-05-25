@@ -5,9 +5,10 @@ import (
 	"context"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
+	"github.com/streadway/amqp"
 )
 
-//go:generate mockgen -source=interfaces.go -destination=./mocks_test.go -package=usecase_test
+//go:generate mockgen -source=interfaces.go -destination=./services/mocks_test.go -package=services_test
 
 type (
 	// User -.
@@ -49,5 +50,11 @@ type (
 	}
 	// UserWebAPI -.
 	WebAPI interface {
+	}
+	UserConsumer interface {
+		NewUserServiceEvents(amqp.Channel, User) (bool, error)
+		handleUserServiceEvents(amqp.Delivery, User)
+		CreateUser(string, User) error
+		DeleteUser(string, User) error
 	}
 )

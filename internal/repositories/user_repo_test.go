@@ -2,152 +2,94 @@ package repositories
 
 import (
 	"context"
-	"reflect"
 	"testing"
 
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal/entity"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/services"
+	"github.com/Netflix-Clone-MicFlix/User-Service/mocks"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestUserRepo_GetAll(t *testing.T) {
-	type args struct {
-		ctx context.Context
-	}
-	tests := []struct {
-		name    string
-		ur      *UserRepo
-		args    args
-		want    []entity.User
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.GetAll(tt.args.ctx)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("UserRepo.GetAll() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("UserRepo.GetAll() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	usermock := entity.User{"test", "test", []string{"test", "test"}}
+	ctx := context.Background()
+	userRepo := new(mocks.UserRepo)
+	userRepo.On("GetAll", mock.AnythingOfType("*context.emptyCtx")).Return([]entity.User{usermock}, nil)
+
+	service := services.NewUserUseCase(userRepo, nil, nil, nil)
+	result, _ := service.UserRepo.GetAll(ctx)
+	assert.Equal(t, result, []entity.User{usermock})
 }
 
 func TestUserRepo_GetById(t *testing.T) {
-	type args struct {
-		ctx     context.Context
-		User_id string
-	}
-	tests := []struct {
-		name    string
-		ur      *UserRepo
-		args    args
-		want    entity.User
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.GetById(tt.args.ctx, tt.args.User_id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("UserRepo.GetById() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("UserRepo.GetById() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	usermock := entity.User{id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+	userRepo := new(mocks.UserRepo)
+	userRepo.On("GetById", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).Return(usermock, nil)
+
+	service := services.NewUserUseCase(userRepo, nil, nil, nil)
+	result, _ := service.UserRepo.GetById(ctx, id)
+
+	assert.Equal(t, result, usermock)
 }
 
 func TestUserRepo_GetByKeycloakId(t *testing.T) {
-	type args struct {
-		ctx         context.Context
-		keycloak_id string
-	}
-	tests := []struct {
-		name    string
-		ur      *UserRepo
-		args    args
-		want    entity.User
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.GetByKeycloakId(tt.args.ctx, tt.args.keycloak_id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("UserRepo.GetByKeycloakId() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("UserRepo.GetByKeycloakId() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	usermock := entity.User{id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	userRepo := new(mocks.UserRepo)
+
+	userRepo.On("GetByKeycloakId", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).Return(usermock, nil)
+
+	service := services.NewUserUseCase(userRepo, nil, nil, nil)
+	result, _ := service.UserRepo.GetByKeycloakId(ctx, id)
+
+	assert.Equal(t, result, usermock)
 }
 
 func TestUserRepo_Create(t *testing.T) {
-	type args struct {
-		ctx         context.Context
-		keycloak_id string
-	}
-	tests := []struct {
-		name    string
-		ur      *UserRepo
-		args    args
-		want    entity.User
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ur.Create(tt.args.ctx, tt.args.keycloak_id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("UserRepo.Create() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("UserRepo.Create() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	usermock := entity.User{id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	userRepo := new(mocks.UserRepo)
+
+	userRepo.On("Create", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).Return(usermock, nil)
+
+	service := services.NewUserUseCase(userRepo, nil, nil, nil)
+	result, _ := service.UserRepo.Create(ctx, id)
+
+	assert.Equal(t, result, usermock)
 }
 
 func TestUserRepo_Update(t *testing.T) {
-	type args struct {
-		ctx     context.Context
-		User_id string
-		User    entity.User
-	}
-	tests := []struct {
-		name    string
-		ur      *UserRepo
-		args    args
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.ur.Update(tt.args.ctx, tt.args.User_id, tt.args.User); (err != nil) != tt.wantErr {
-				t.Errorf("UserRepo.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	usermock := entity.User{id, "test", []string{"test", "test"}}
+	ctx := context.Background()
+
+	userRepo := new(mocks.UserRepo)
+
+	userRepo.On("Update", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string"), mock.AnythingOfType("entity.User")).Return(nil)
+
+	service := services.NewUserUseCase(userRepo, nil, nil, nil)
+	result := service.UserRepo.Update(ctx, id, usermock)
+
+	assert.NoError(t, result)
 }
 
 func TestUserRepo_Delete(t *testing.T) {
-	type args struct {
-		ctx     context.Context
-		user_id string
-	}
-	tests := []struct {
-		name    string
-		ur      *UserRepo
-		args    args
-		wantErr bool
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.ur.Delete(tt.args.ctx, tt.args.user_id); (err != nil) != tt.wantErr {
-				t.Errorf("UserRepo.Delete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	id := "c00f99ba-a997-4311-ba81-c6aa78f94b13"
+	ctx := context.Background()
+
+	userRepo := new(mocks.UserRepo)
+
+	userRepo.On("Delete", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).Return(nil)
+
+	service := services.NewUserUseCase(userRepo, nil, nil, nil)
+	result := service.UserRepo.Delete(ctx, id)
+
+	assert.NoError(t, result)
 }
