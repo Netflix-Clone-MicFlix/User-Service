@@ -22,3 +22,9 @@ rabbitmq:
 
 authentication:
   secret: "provide secret"
+
+mongodb:
+  username: admin
+  password: [replace]
+  cluster: mongodb2
+  database: Users

@@ -70,3 +70,20 @@ func NewConfig() (*Config, error) {
 
 	return cfg, nil
 }
+
+// NewConfig returns app config.
+func NewIntergrationTestConfig(path string) (*Config, error) {
+	cfg := &Config{}
+
+	err := cleanenv.ReadConfig(path, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("config error: %w", err)
+	}
+
+	err = cleanenv.ReadEnv(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
+}

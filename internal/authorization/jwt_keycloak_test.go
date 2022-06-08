@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func TestJwtKeycloak_ExtractToken(t *testing.T) {
+func TestExtractToken(t *testing.T) {
 	type args struct {
 		r *http.Request
 	}
@@ -18,11 +18,23 @@ func TestJwtKeycloak_ExtractToken(t *testing.T) {
 		m    *JwtKeycloak
 		args args
 		want string
-	}{}
+	}{
+		{
+			name: "test1",
+			args: args{
+				r: &http.Request{
+					Header: http.Header{
+						"Authorization": []string{"Bearer token"},
+					},
+				},
+			},
+			want: "token",
+		},
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.m.ExtractToken(tt.args.r); got != tt.want {
-				t.Errorf("JwtKeycloak.ExtractToken() = %v, want %v", got, tt.want)
+				t.Errorf("ExtractToken() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -1,139 +1,114 @@
 package integration_test
 
-// import (
-// 	"log"
-// 	"net/http"
-// 	"os"
-// 	"testing"
-// 	"time"
+import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"testing"
+	"time"
 
-// 	. "github.com/Eun/go-hit"
+	. "github.com/Eun/go-hit"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+)
 
-// 	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/rabbitmq/rmq_rpc/client"
-// )
+const (
+	// Attempts connection
+	host = "localhost:8080/user-service"
+	// pgHost     = "postgres://user:pass@survey-service_postgres:5432/survey-service"
+	healthPath = "http://" + host + "/healthz"
+	attempts   = 20
 
-// const (
-// 	// Attempts connection
-// 	host       = "app:8080"
-// 	healthPath = "http://" + host + "/healthz"
-// 	attempts   = 20
+	// HTTP REST
+	basePath        = "http://" + host + "/v1"
+	KeycloakService = "http://localhost:8080/auth/realms/micflix/protocol/openid-connect/token"
 
-// 	// HTTP REST
-// 	basePath = "http://" + host + "/v1"
+	testAuthSecret = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkL+KfUTxVH+R4hG9jA5UR8/kqH2rAAtCpmDvcMJkDDZnFYM790fz/kVB3TlMP5oUChqTFY/dMGhtKjZ+JsC5r/pK6m5x1OX8MqsSLrfUL8Xkp9v1CCV0nVCNrAvVzET8t7UL4jXbADw9zrkwk9fsXdQLoY8ZTDVwOCtoNvWO0D7DyKY08SPxWBDqLPpPojBd5gXMqx33M+IY71801bsP8k7B7UjjkOina98jkKdBEyOhvt52b/t9TCoEPcnzsbOeDHG6C25Dx/azF70DtM4DKKa9wvWrFyZS8z45GwClhSCLb6ifPkrS4tanJ/gK85nT8cIcw7H2wWxqT4ZWlGmvwwIDAQAB"
+)
 
-// 	// RabbitMQ RPC
-// 	rmqURL            = "amqp://guest:guest@rabbitmq:5672/"
-// 	rpcServerExchange = "rpc_server"
-// 	rpcClientExchange = "rpc_client"
-// 	requests          = 10
-// )
+var authToken string
+var UserRepo internal.UserRepo
+var ProfileRepo internal.ProfileRepo
+var MovieTagRepo internal.MovieTagRepo
 
-// func TestMain(m *testing.M) {
-// 	err := healthCheck(attempts)
-// 	if err != nil {
-// 		log.Fatalf("Integration tests: host %s is not available: %s", host, err)
-// 	}
+func TestMain(m *testing.M) {
 
-// 	log.Printf("Integration tests: host %s is available", host)
+	err := healthCheck(attempts)
+	if err != nil {
+		log.Fatalf("Integration tests: host %s is not available: %s", host, err)
+	}
+	// cfg, err := config.NewIntergrationTestConfig("../config/config.yml")
+	// if err != nil {
+	// 	log.Fatalf("Config error: %s", err)
+	// }
+	// // Repository mongodb
+	// mdb, err := mongodb.New(cfg.MDB.Username, cfg.MDB.Password, cfg.MDB.Cluster, cfg.MDB.Database)
+	// if err != nil {
+	// 	log.Fatal(fmt.Errorf("app - Run - postgres.New: %w", err))
+	// }
+	// UserRepo = repositories.NewUserRepo(mdb)
+	// ProfileRepo = repositories.NewProfileRepo(mdb)
+	// MovieTagRepo = repositories.NewMovieTagRepo(mdb)
 
-// 	code := m.Run()
-// 	os.Exit(code)
-// }
+	authToken, err = getToken()
+	if err != nil {
+		log.Fatal("Integration tests: cannot get token", err)
+	}
 
-// func healthCheck(attempts int) error {
-// 	var err error
+	log.Printf("Integration tests: host %s is available", host)
 
-// 	for attempts > 0 {
-// 		err = Do(Get(healthPath), Expect().Status().Equal(http.StatusOK))
-// 		if err == nil {
-// 			return nil
-// 		}
+	code := m.Run()
+	os.Exit(code)
+}
 
-// 		log.Printf("Integration tests: url %s is not available, attempts left: %d", healthPath, attempts)
+func healthCheck(attempts int) error {
+	var err error
 
-// 		time.Sleep(time.Second)
+	for attempts > 0 {
+		err = Do(Get(healthPath), Expect().Status().Equal(http.StatusOK))
+		if err == nil {
+			return nil
+		}
 
-// 		attempts--
-// 	}
+		log.Printf("Integration tests: url %s is not available, attempts left: %d", healthPath, attempts)
 
-// 	return err
-// }
+		time.Sleep(time.Second)
 
-// // HTTP POST: /translation/do-translate.
-// func TestHTTPDoTranslate(t *testing.T) {
-// 	body := `{
-// 		"destination": "en",
-// 		"original": "текст для перевода",
-// 		"source": "auto"
-// 	}`
-// 	Test(t,
-// 		Description("DoTranslate Success"),
-// 		Post(basePath+"/translation/do-translate"),
-// 		Send().Headers("Content-Type").Add("application/json"),
-// 		Send().Body().String(body),
-// 		Expect().Status().Equal(http.StatusOK),
-// 		Expect().Body().JSON().JQ(".translation").Equal("text for translation"),
-// 	)
+		attempts--
+	}
 
-// 	body = `{
-// 		"destination": "en",
-// 		"original": "текст для перевода"
-// 	}`
-// 	Test(t,
-// 		Description("DoTranslate Fail"),
-// 		Post(basePath+"/translation/do-translate"),
-// 		Send().Headers("Content-Type").Add("application/json"),
-// 		Send().Body().String(body),
-// 		Expect().Status().Equal(http.StatusBadRequest),
-// 		Expect().Body().JSON().JQ(".error").Equal("invalid request body"),
-// 	)
-// }
+	return err
+}
 
-// // HTTP GET: /translation/history.
-// func TestHTTPHistory(t *testing.T) {
-// 	Test(t,
-// 		Description("History Success"),
-// 		Get(basePath+"/translation/history"),
-// 		Expect().Status().Equal(http.StatusOK),
-// 		Expect().Body().String().Contains(`{"history":[{`),
-// 	)
-// }
+func getToken() (string, error) {
+	// get the access_token from the response
+	form := url.Values{}
+	form.Add("grant_type", "password")
+	form.Add("username", "IntegrationTest")
+	form.Add("password", "IntegrationTest")
+	form.Add("client_id", "micflix-angular-client")
+	form.Add("client_secret", "")
 
-// // RabbitMQ RPC Client: getHistory.
-// func TestRMQClientRPC(t *testing.T) {
-// 	rmqClient, err := client.New(rmqURL, rpcServerExchange, rpcClientExchange)
-// 	if err != nil {
-// 		t.Fatal("RabbitMQ RPC Client - init error - client.New")
-// 	}
+	resp, err := http.PostForm(KeycloakService, form)
+	if err != nil {
+		return "", err
+	}
 
-// 	defer func() {
-// 		err = rmqClient.Shutdown()
-// 		if err != nil {
-// 			t.Fatal("RabbitMQ RPC Client - shutdown error - rmqClient.RemoteCall", err)
-// 		}
-// 	}()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
 
-// 	type Translation struct {
-// 		Source      string `json:"source"`
-// 		Destination string `json:"destination"`
-// 		Original    string `json:"original"`
-// 		Translation string `json:"translation"`
-// 	}
+	// get the access_token from the response
+	var token struct {
+		AccessToken string `json:"access_token"`
+	}
+	err = json.Unmarshal(body, &token)
+	if err != nil {
+		return "", err
+	}
 
-// 	type historyResponse struct {
-// 		History []Translation `json:"history"`
-// 	}
-
-// 	for i := 0; i < requests; i++ {
-// 		var history historyResponse
-
-// 		err = rmqClient.RemoteCall("getHistory", nil, &history)
-// 		if err != nil {
-// 			t.Fatal("RabbitMQ RPC Client - remote call error - rmqClient.RemoteCall", err)
-// 		}
-
-// 		if history.History[0].Original != "текст для перевода" {
-// 			t.Fatal("Original != текст для перевода")
-// 		}
-// 	}
-// }
+	return token.AccessToken, nil
+}
