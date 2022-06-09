@@ -1,30 +1,29 @@
 app:
-  name: 'User-Service'
-  version: '1.0.0'
+  name: "User-Service"
+  version: "1.0.0"
 
 http:
-  port: '9000'
+  port: "9000"
   allowed-origins:
-    - 'http://localhost:4200'
-    - 'https://micflix-platform.krekels-server.com'
-    - 'https://micflix-data.krekels-server.com'
+    - "http://localhost:4200"
+    - "https://micflix-platform.krekels-server.com"
+    - "https://micflix-data.krekels-server.com"
 
 logger:
-  log_level: 'debug'
-  rollbar_env: 'User-Service'
+  log_level: "debug"
+  rollbar_env: "User-Service"
 
 # postgres:
 #   pool_max: 2
 
 rabbitmq:
-  url: 'amqp://guest:guest@rabbitmq:5672/'
-  queue: 'user-service'
+  url: "amqp://guest:guest@rabbitmq:5672/"
+  queue: "user-service"
 
 authentication:
   secret: "provide secret"
-
-mongodb:
-  username: admin
-  password: [replace]
-  cluster: mongodb2
-  database: Users
+# mongodb:
+#   username: admin
+#   password: [replace]
+#   cluster: mongodb2
+#   database: Users
