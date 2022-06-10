@@ -2,6 +2,7 @@ package integration_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,20 +13,22 @@ import (
 
 	. "github.com/Eun/go-hit"
 	"github.com/Netflix-Clone-MicFlix/User-Service/internal"
+	"github.com/Netflix-Clone-MicFlix/User-Service/internal/repositories"
+	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/mongodb"
 )
 
 const (
 	// Attempts connection
-	host = "localhost:8080/user-service"
-	// pgHost     = "postgres://user:pass@survey-service_postgres:5432/survey-service"
+	host       = "micflix-api-gateway.com:8080/user-service"
 	healthPath = "http://" + host + "/healthz"
 	attempts   = 20
+	id         = "8c665ed0-72dc-490f-9968-afca1d087191" //<-- test guid
 
 	// HTTP REST
 	basePath        = "http://" + host + "/v1"
-	KeycloakService = "http://localhost:8080/auth/realms/micflix/protocol/openid-connect/token"
+	KeycloakService = "http://micflix-keycloak.com:8080/auth/realms/micflix/protocol/openid-connect/token"
 
-	testAuthSecret = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkL+KfUTxVH+R4hG9jA5UR8/kqH2rAAtCpmDvcMJkDDZnFYM790fz/kVB3TlMP5oUChqTFY/dMGhtKjZ+JsC5r/pK6m5x1OX8MqsSLrfUL8Xkp9v1CCV0nVCNrAvVzET8t7UL4jXbADw9zrkwk9fsXdQLoY8ZTDVwOCtoNvWO0D7DyKY08SPxWBDqLPpPojBd5gXMqx33M+IY71801bsP8k7B7UjjkOina98jkKdBEyOhvt52b/t9TCoEPcnzsbOeDHG6C25Dx/azF70DtM4DKKa9wvWrFyZS8z45GwClhSCLb6ifPkrS4tanJ/gK85nT8cIcw7H2wWxqT4ZWlGmvwwIDAQAB"
+	testAuthSecret = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiMoKmSYAn0yOooKktMQT8rC6gRlcic3HpvhnNk7X/u8n3GfdlyzVAOWhzGDE2MPm/tIduR8g/qX4ZVcFy2Vf9bIf4GdMYndITBnumloQkH8D+yqdwhlxSsjxwLLAvhHWEXUnigGgfMu6ylf325yLnAsYpNPkvuIb191Mn4vTGiq4qKq0/+kOVvzYLO2x5WwIDhd5DeyAFSmCOCWb7qVZ7crH17IMeWgvAo/K7coZFI4TNQl6c6J6gpqFfhzFolIdNXZr+asdgKwA2beaCRjmc9wgDkRaA9o56P69ZcVAotiboQFkhlRQf1bMd3tPgQIdM0gu5y8XljU5S/5xwAQWtwIDAQAB"
 )
 
 var authToken string
@@ -39,21 +42,17 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("Integration tests: host %s is not available: %s", host, err)
 	}
-	// cfg, err := config.NewIntergrationTestConfig("../config/config.yml")
-	// if err != nil {
-	// 	log.Fatalf("Config error: %s", err)
-	// }
-	// // Repository mongodb
-	// mdb, err := mongodb.New(cfg.MDB.Username, cfg.MDB.Password, cfg.MDB.Cluster, cfg.MDB.Database)
-	// if err != nil {
-	// 	log.Fatal(fmt.Errorf("app - Run - postgres.New: %w", err))
-	// }
-	// UserRepo = repositories.NewUserRepo(mdb)
-	// ProfileRepo = repositories.NewProfileRepo(mdb)
-	// MovieTagRepo = repositories.NewMovieTagRepo(mdb)
+
+	mdb, err := mongodb.New("IntegrationTest", "IntegrationTest", "localhost", "Users")
+	if err != nil {
+		log.Fatal(fmt.Errorf("app - Run - Mongodb.New: %w", err))
+	}
+	UserRepo = repositories.NewUserRepo(mdb)
+	ProfileRepo = repositories.NewProfileRepo(mdb)
+	MovieTagRepo = repositories.NewMovieTagRepo(mdb)
 
 	authToken, err = getToken()
-	if err != nil {
+	if err != nil || authToken == "" {
 		log.Fatal("Integration tests: cannot get token", err)
 	}
 
@@ -111,4 +110,38 @@ func getToken() (string, error) {
 	}
 
 	return token.AccessToken, nil
+}
+
+// Http GET: GetAllUsers
+func TestGetAllUsers(t *testing.T) {
+	Do(Get(basePath+"/users"),
+		Send().Headers("authorization").Add("Bearer "+authToken),
+		Expect().Status().Equal(http.StatusOK),
+	)
+}
+
+// Http GET: GetById
+func TestGetUserById(t *testing.T) {
+	TestCreateUser(t) //whitout adding the user, the test will fail
+	Do(Get(basePath+"/users/"+id),
+		Send().Headers("authorization").Add("Bearer "+authToken),
+		Expect().Status().Equal(http.StatusOK),
+	)
+}
+
+// Http GET: GetAllProfilesById
+func TestGetAllProfilesById(t *testing.T) {
+	TestCreateUser(t) //whitout adding the user, the test will fail
+	Do(Get(basePath+"/users/profile/"+id),
+		Send().Headers("authorization").Add("Bearer "+authToken),
+		Expect().Status().Equal(http.StatusOK),
+	)
+}
+
+// Http POST: Create
+func TestCreateUser(t *testing.T) {
+	Do(Post(basePath+"/user/"+id),
+		Send().Headers("authorization").Add("Bearer "+authToken),
+		Expect().Status().Equal(http.StatusCreated),
+	)
 }
