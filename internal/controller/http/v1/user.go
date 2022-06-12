@@ -22,13 +22,13 @@ func newUserRoutes(handler *gin.RouterGroup, jwtKeycloak *auth.JwtKeycloak, t in
 
 	user := handler.Group("/user")
 	{
-		user.Use(corsConfig)
+		// user.Use(corsConfig)
 		user.GET("", r.GetAll)
 		user.POST("", r.Create)
 		user.GET("/:user_id", r.GetById)
 		genres := user.Group("/profile")
 		{
-			genres.Use(corsConfig)
+			// genres.Use(corsConfig)
 			genres.GET("/:user_id", r.GetAllProfilesById)
 		}
 	}
