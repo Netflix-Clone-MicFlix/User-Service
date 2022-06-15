@@ -17,18 +17,23 @@ import (
 	"github.com/Netflix-Clone-MicFlix/User-Service/pkg/mongodb"
 )
 
+// run the tests
+// step 1: docker compose up -d
+// step 2: go clean -testcache | go test -v ./integration-test/...
+// step 3: view the result in the console
+// step 4: docker-compose down
+
 const (
 	// Attempts connection
-	host       = "micflix-api-gateway.com:8080/user-service"
+	host       = "localhost:80"
 	healthPath = "http://" + host + "/healthz"
 	attempts   = 20
-	id         = "8c665ed0-72dc-490f-9968-afca1d087191" //<-- test guid
+	id         = "1a6db844-2426-42a9-8770-2302714bcc2c" //<-- test guid
 
 	// HTTP REST
 	basePath        = "http://" + host + "/v1"
-	KeycloakService = "http://micflix-keycloak.com:8080/auth/realms/micflix/protocol/openid-connect/token"
-
-	testAuthSecret = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiMoKmSYAn0yOooKktMQT8rC6gRlcic3HpvhnNk7X/u8n3GfdlyzVAOWhzGDE2MPm/tIduR8g/qX4ZVcFy2Vf9bIf4GdMYndITBnumloQkH8D+yqdwhlxSsjxwLLAvhHWEXUnigGgfMu6ylf325yLnAsYpNPkvuIb191Mn4vTGiq4qKq0/+kOVvzYLO2x5WwIDhd5DeyAFSmCOCWb7qVZ7crH17IMeWgvAo/K7coZFI4TNQl6c6J6gpqFfhzFolIdNXZr+asdgKwA2beaCRjmc9wgDkRaA9o56P69ZcVAotiboQFkhlRQf1bMd3tPgQIdM0gu5y8XljU5S/5xwAQWtwIDAQAB"
+	KeycloakService = "https://keycloak.krekels-server.com/auth/realms/micflix/protocol/openid-connect/token"
+	testAuthSecret  = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4t/mew6nUASz0MyRlDKKXE7YcPd90hR8Thao315S6S//diWxRPJnPb8InrfKHvncPGYjevCyah9XPN8cxwEP74f7FauXLkvDRsXomAYl17drW/54fQmzj3ZCIQByWkdv7SnAHHvjFzp1pTRGJF1OGPZyqDHuS0AttWUbOaaECm8tT3qzFlQYzvyhCWSRrZ1MJL1oYV4UqQCMcenKlL8R0zeRql/XuJ20AkkFio1UzDcTdHu5OSoQ16kB9nxi2QkCdeQz7le2x63OLoHUS7MpCCV0PwDmDNyj1VFS/sukAc5RFF5XF2lYa85GO+zCIEFe7/d6PS+cY9mVwLvOzJC9dQIDAQAB"
 )
 
 var authToken string
@@ -120,12 +125,35 @@ func TestGetAllUsers(t *testing.T) {
 	)
 }
 
+func TestGetAllUsers_NoToken(t *testing.T) {
+	Do(Get(basePath+"/users"),
+		Send().Headers("authorization").Add("Bearer"),
+		Expect().Status().Equal(http.StatusUnauthorized),
+	)
+}
+
 // Http GET: GetById
 func TestGetUserById(t *testing.T) {
 	TestCreateUser(t) //whitout adding the user, the test will fail
 	Do(Get(basePath+"/users/"+id),
 		Send().Headers("authorization").Add("Bearer "+authToken),
 		Expect().Status().Equal(http.StatusOK),
+	)
+}
+
+func TestGetUserById_NoID(t *testing.T) {
+	TestCreateUser(t) //whitout adding the user, the test will fail
+	Do(Get(basePath+"/users/"),
+		Send().Headers("authorization").Add("Bearer "+authToken),
+		Expect().Status().Equal(http.StatusBadRequest),
+	)
+}
+
+func TestGetUser_NoToken(t *testing.T) {
+	TestCreateUser(t) //whitout adding the user, the test will fail
+	Do(Get(basePath+"/users/"+id),
+		Send().Headers("authorization").Add("Bearer "),
+		Expect().Status().Equal(http.StatusUnauthorized),
 	)
 }
 
@@ -138,10 +166,41 @@ func TestGetAllProfilesById(t *testing.T) {
 	)
 }
 
+func TestGetAllProfilesById_NoToken(t *testing.T) {
+	TestCreateUser(t) //whitout adding the user, the test will fail
+	Do(Get(basePath+"/users/profile/"+id),
+		Send().Headers("authorization").Add("Bearer "),
+		Expect().Status().Equal(http.StatusUnauthorized),
+	)
+}
+func TestGetAllProfilesById_NoID(t *testing.T) {
+	TestCreateUser(t) //whitout adding the user, the test will fail
+	Do(Get(basePath+"/users/profile/"),
+		Send().Headers("authorization").Add("Bearer "+authToken),
+		Expect().Status().Equal(http.StatusBadRequest),
+	)
+}
+
 // Http POST: Create
 func TestCreateUser(t *testing.T) {
 	Do(Post(basePath+"/user/"+id),
 		Send().Headers("authorization").Add("Bearer "+authToken),
 		Expect().Status().Equal(http.StatusCreated),
+	)
+}
+
+// Http POST: Create
+func TestCreateUser_NoID(t *testing.T) {
+	Do(Post(basePath+"/user/"),
+		Send().Headers("authorization").Add("Bearer "+authToken),
+		Expect().Status().Equal(http.StatusBadRequest),
+	)
+}
+
+// Http POST: Create
+func TestCreateUser_NoToken(t *testing.T) {
+	Do(Post(basePath+"/user/"+id),
+		Send().Headers("authorization").Add("Bearer "),
+		Expect().Status().Equal(http.StatusUnauthorized),
 	)
 }
